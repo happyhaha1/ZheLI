@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { expect, test, vi } from 'vitest'
-import HelloWorld from '../components/HelloWorld.vue'
+import HelloWorld from '../components/User.vue'
 
 vi.mock('../api', () => ({
   sendMsgToMainProcess: vi.fn(),

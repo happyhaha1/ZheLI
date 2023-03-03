@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import UserInfo from './components/UserInfo.vue'
 </script>
 
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" class="logo">
-  <HelloWorld title="Vite + Electron & Esbuild" />
+  <UserInfo />
 </template>
 
 <style>
