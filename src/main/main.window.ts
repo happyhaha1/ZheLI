@@ -1,8 +1,10 @@
 import { join } from 'path'
 import { BrowserWindow, app } from 'electron'
+import pie from 'puppeteer-in-electron'
 
 const isDev = !app.isPackaged
 
+pie.initialize(app, 8136)
 export async function createWindow() {
   const win = new BrowserWindow({
     width: 1000,
@@ -16,7 +18,7 @@ export async function createWindow() {
     autoHideMenuBar: !isDev,
   })
 
-  win.maximize()
+  // win.maximize()
 
   const URL = isDev
     ? process.env.DS_RENDERER_URL
