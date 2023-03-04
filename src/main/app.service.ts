@@ -47,6 +47,5 @@ export class AppService {
     catch (error) {
       return { error }
     }
-    return
   }
 }

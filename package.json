@@ -20,6 +20,8 @@
     "einf": "^1.4.0",
     "element-plus": "^2.2.33",
     "luxon": "^3.2.1",
+    "pinia": "^2.0.32",
+    "pinia-plugin-loading": "^2.0.0",
     "puppeteer-core": "^19.7.2",
     "puppeteer-in-electron": "^3.0.5",
     "vue": "^3.2.47"

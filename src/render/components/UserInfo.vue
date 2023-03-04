@@ -1,23 +1,19 @@
 <script setup lang="ts">
 import { useIpc } from '@render/plugins/ipc'
+import { useUserStore } from '@render/store'
 import { ElMessage } from 'element-plus'
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import CourseList from './CourseList.vue'
-const user = ref<User | null>(null)
-const loading = ref(true)
 const ipc = useIpc()
+
+const userStore = useUserStore()
 
 async function loadData() {
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    const { data } = await ipc.send<User>('get_user_info')
-    user.value = data
+    await userStore.info()
   }
   catch (error) {
     ElMessage.error(error.message)
-  }
-  finally {
-    loading.value = false
   }
 }
 
@@ -28,17 +24,13 @@ onMounted(async () => {
 function login() {
   ipc.send('login')
 }
-// ipc.on('login_success', async () => {
-//   await loadData()
-// })
+ipc.on('login_success', async () => {
+  await loadData()
+})
 async function logout() {
   try {
-    const { data } = await ipc.send('logout')
-    ElMessage({
-      message: data,
-      type: 'success',
-    })
-    user.value = null
+    await userStore.logout()
+    ElMessage.success('退成成功')
   }
   catch (error) {
     ElMessage.error(error.message)
@@ -47,16 +39,16 @@ async function logout() {
 </script>
 
 <template>
-  <el-row v-if="user" class="user-info">
+  <el-row v-if="userStore.isLoggedIn" class="user-info">
     <el-col :span="4">
-      <el-avatar :src="user.avatarUrl" :size="80" />
+      <el-avatar :src="userStore.avatarUrl" :size="80" />
     </el-col>
     <el-col :span="20">
       <div class="name">
-        {{ user.name }}
+        {{ userStore.name }}
       </div>
       <div class="company">
-        {{ user.company }}
+        {{ userStore.company }}
       </div>
       <div class="logout">
         <el-button @click="logout">
@@ -65,15 +57,15 @@ async function logout() {
       </div>
     </el-col>
   </el-row>
-  <div v-else-if="user === null && !loading">
+  <div v-else-if="!userStore.isLoggedIn && !userStore.$loading.info">
     <el-button @click="login">
       登录
     </el-button>
   </div>
-  <div v-else-if="loading">
+  <div v-else-if="userStore.$loading.info">
     Lodding....
   </div>
-  <CourseList :is-logged-in="user != null" />
+  <CourseList :is-logged-in="userStore.isLoggedIn" />
 </template>
 
 <style>
