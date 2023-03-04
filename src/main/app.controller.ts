@@ -7,18 +7,9 @@ export class AppController {
     private appService: AppService,
   ) { }
 
-  @IpcSend('reply-msg')
-  public replyMsg(msg: string) {
-    return `${this.appService.getDelayTime()} seconds later, the main process replies to your message: ${msg}`
-  }
-
-  @IpcHandle('send-msg')
-  public async handleSendMsg(msg: string): Promise<string> {
-    setTimeout(() => {
-      this.replyMsg(msg)
-    }, this.appService.getDelayTime() * 1000)
-
-    return `The main process received your message: ${msg}`
+  @IpcSend('login_success')
+  public loginSuccess() {
+    return 'login_success'
   }
 
   @IpcHandle('login')

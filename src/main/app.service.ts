@@ -1,14 +1,11 @@
-import { Injectable } from 'einf'
+import { BrowserWindow } from 'electron'
+import { Injectable, Window } from 'einf'
 import { ZheXue } from './Study'
 @Injectable()
 export class AppService {
   private stu: ZheXue
-  constructor() {
-    this.stu = new ZheXue()
-  }
-
-  public getDelayTime(): number {
-    return 2
+  constructor(@Window() private win: BrowserWindow) {
+    this.stu = new ZheXue(win)
   }
 
   public async login(): Promise<IpcResponse<String>> {

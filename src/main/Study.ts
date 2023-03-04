@@ -20,7 +20,7 @@ export class ZheXue {
 
   private readonly url: string = 'https://www.zjce.gov.cn'
 
-  constructor(private chromePath?: string, private show = false) {}
+  constructor(private win: BrowserWindow, private chromePath?: string, private show = false) {}
 
   private async ensureBrowserInitialized() {
     if (!this.browser)
@@ -51,6 +51,7 @@ export class ZheXue {
           })
           await this.save_cookies(JSON.stringify(cookies))
           this.loginWindow.close()
+          this.win.webContents.send('login_success')
         }
       })
     }
