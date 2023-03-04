@@ -39,6 +39,16 @@ export class AppService {
     }
   }
 
+  public async change_show(show: boolean): Promise<IpcResponse<string>> {
+    try {
+      await this.stu.chageShow(show)
+      return { data: '切换成功' }
+    }
+    catch (error) {
+      return { error }
+    }
+  }
+
   public async logout(): Promise<IpcResponse<string>> {
     try {
       await this.stu.logout()

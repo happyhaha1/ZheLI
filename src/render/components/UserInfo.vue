@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useIpc } from '@render/plugins/ipc'
-import { useUserStore } from '@render/store'
+import { useAppStore, useUserStore } from '@render/store'
 import { ElMessage } from 'element-plus'
 import { onMounted } from 'vue'
 import CourseList from './CourseList.vue'
 const ipc = useIpc()
 
 const userStore = useUserStore()
-
+const appStore = useAppStore()
 async function loadData() {
   try {
     await userStore.info()
@@ -16,10 +16,6 @@ async function loadData() {
     ElMessage.error(error.message)
   }
 }
-
-onMounted(async () => {
-  await loadData()
-})
 
 function login() {
   ipc.send('login')
@@ -30,7 +26,19 @@ ipc.on('login_success', async () => {
 async function logout() {
   try {
     await userStore.logout()
-    ElMessage.success('退成成功')
+    ElMessage.success('退出成功')
+  }
+  catch (error) {
+    ElMessage.error(error.message)
+  }
+}
+onMounted(async () => {
+  await loadData()
+})
+async function handleChange() {
+  try {
+    await appStore.chageShow()
+    ElMessage.success('修改成功')
   }
   catch (error) {
     ElMessage.error(error.message)
@@ -51,7 +59,11 @@ async function logout() {
         {{ userStore.company }}
       </div>
       <div class="logout">
-        <el-button @click="logout">
+        <el-switch
+          v-model="appStore.show" style="--el-switch-on-color: #13ce66" active-text="显示浏览器"
+          inactive-text="不显示浏览器" @change="handleChange"
+        />
+        <el-button class="btn" @click="logout">
           退出登录
         </el-button>
       </div>
@@ -84,5 +96,8 @@ async function logout() {
 
 .logout {
   margin-top: 20px;
+}
+.btn {
+  margin-left: 20px;
 }
 </style>

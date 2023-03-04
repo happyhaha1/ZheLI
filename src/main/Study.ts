@@ -167,6 +167,7 @@ export class ZheXue {
           url: aHref,
           videoNum,
           frist: true,
+          progress: 0,
         })
       })
       // 返回数据数组
@@ -307,6 +308,11 @@ export class ZheXue {
     }
     const fileContent = await fs.promises.readFile(this.cookieFilePath, 'utf-8')
     return JSON.parse(fileContent)
+  }
+
+  async chageShow(show: boolean) {
+    await this.close()
+    this.show = show
   }
 
   async autoScroll(page: Page) {

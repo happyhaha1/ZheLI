@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { useIpc } from '@render/plugins/ipc'
+// import { watch } from 'vue'
+import { useCoursesStore } from '@render/store'
 import { ElMessage } from 'element-plus'
-const props = defineProps({
+defineProps({
   isLoggedIn: {
     type: Boolean,
     required: true,
@@ -10,29 +10,14 @@ const props = defineProps({
   },
 })
 
-const ipc = useIpc()
+const coursesStore = useCoursesStore()
 
-const courses = ref<Course[] | null>(null)
-const loading = ref(false)
-const total = ref(1820)
-const currentPage = ref(1)
-
-const handlePageChange = async (page: number) => {
-  currentPage.value = page
-  await loadData(currentPage.value)
-}
-
-async function loadData(page: number) {
-  loading.value = true
+async function loadData() {
   try {
-    const { data } = await ipc.send<Course[]>('get_courses', page)
-    courses.value = data
+    await coursesStore.get_courses()
   }
   catch (error) {
     ElMessage.error(error.message)
-  }
-  finally {
-    loading.value = false
   }
 }
 const formatQuantity = (quantity: Course): string => {
@@ -43,39 +28,35 @@ function handleSelect(selectData) {
 //   console.log(selectData)
 //   defaultData.listData = val
 }
-watch(() => props.isLoggedIn, async (isLoggedIn) => {
-  if (isLoggedIn)
-    await loadData(currentPage.value)
-})
 </script>
 
 <template>
   <div v-if="isLoggedIn">
     <el-table
-      v-loading="loading" :data="courses" style="width: 100%"
+      v-loading="coursesStore.$loading.get_courses" :data="coursesStore.cousers" style="width: 100%"
       @selection-change="handleSelect"
     >
       <el-table-column type="selection" />
       <el-table-column label="课程图片">
         <template #default="{ row }">
-          <img :src="row.imgUrl" alt="Course image" style="width: 100px; height: 60px;">
+          <img :src="row.imgUrl" alt="img" style="width: 100px; height: 60px;">
         </template>
       </el-table-column>
       <el-table-column label="课程名字">
         <template #default="{ row }">
-          <a :href="`https://www.zjce.gov.cn${row.url}`">{{ row.name }}</a>
+          <a :href="`https://www.zjce.gov.cn${row.url}`" target="_blank">{{ row.name }}</a>
         </template>
       </el-table-column>
       <el-table-column prop="videoNum" label="视频数量" :formatter="formatQuantity" />
     </el-table>
     <el-pagination
-      v-model:current-page="currentPage"
+      v-model:current-page="coursesStore.meta.pageNo"
       layout="prev, pager, next"
-      :total="total"
+      :total="coursesStore.meta.total"
       :page-size="20"
-      @current-change="handlePageChange"
+      @current-change="loadData"
     />
-    <div v-if="!loading" style="margin-top: 20px">
+    <div v-if="!coursesStore.$loading.get_courses" style="margin-top: 20px">
       <el-button>
         开始学习
       </el-button>
