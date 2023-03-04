@@ -28,4 +28,25 @@ export class AppService {
       return { error }
     }
   }
+
+  public async get_courses(page: number): Promise<IpcResponse<Course[]>> {
+    try {
+      const courses = await this.stu.getCourses(page)
+      return { data: courses }
+    }
+    catch (error) {
+      return { error }
+    }
+  }
+
+  public async logout(): Promise<IpcResponse<string>> {
+    try {
+      await this.stu.logout()
+      return { data: '退出登录成功' }
+    }
+    catch (error) {
+      return { error }
+    }
+    return
+  }
 }

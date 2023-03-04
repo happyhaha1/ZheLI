@@ -21,4 +21,14 @@ export class AppController {
   public async get_user_info(): Promise<IpcResponse<User>> {
     return this.appService.get_user_info()
   }
+
+  @IpcHandle('get_courses')
+  public async get_courses(page: number): Promise<IpcResponse<Course[]>> {
+    return this.appService.get_courses(page)
+  }
+
+  @IpcHandle('logout')
+  public async logout(): Promise<IpcResponse<String>> {
+    return this.appService.logout()
+  }
 }

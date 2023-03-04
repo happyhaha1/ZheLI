@@ -18,9 +18,10 @@ export class ZheXue {
   private searchWindow?: BrowserWindow
   private searchPage?: Page
 
+  private readonly cookieFilePath: string = path.join(app.getPath('userData'), 'cookie.json')
   private readonly url: string = 'https://www.zjce.gov.cn'
 
-  constructor(private win: BrowserWindow, private chromePath?: string, private show = false) {}
+  constructor(private win: BrowserWindow, private chromePath: string = '', private show = false) {}
 
   private async ensureBrowserInitialized() {
     if (!this.browser)
@@ -123,20 +124,21 @@ export class ZheXue {
     // this.searchWindow.close()
   }
 
-  async getCourses(
-  ): Promise<{ courses: Array<Course>; allLength: number }> {
+  async getCourses(page: number): Promise<Course[]> {
     await this.ensureBrowserInitialized()
 
     await this.homePage.goto(`${this.url}/videos`)
 
     await this.homePage.waitForNetworkIdle()
 
-    const length = await this.homePage.$eval(
-      '.paginationContent > ul > li:nth-child(6)',
-      el => el.textContent,
-    )
-    const allLength = parseInt(length)
-
+    const paginationItem = await this.homePage.$(`li[title="${page}"]`)
+    // Click the pagination item
+    await paginationItem.click()
+    await this.homePage.waitForNetworkIdle()
+    await this.homePage.evaluate(() => {
+      window.scrollTo(0, 0)
+    })
+    await this.autoScroll(this.homePage)
     const courses = await this.homePage.$$eval('.clearfix li', (els) => {
       const courses: Course[] = []
       // 遍历每个<li>元素
@@ -171,7 +173,7 @@ export class ZheXue {
       return courses
     })
 
-    return { courses, allLength }
+    return courses
   }
 
   async play(course: Course): Promise<boolean> {
@@ -266,6 +268,10 @@ export class ZheXue {
     }
   }
 
+  async logout() {
+    await fs.promises.unlink(this.cookieFilePath)
+  }
+
   async close() {
     if (this.homeWindow) {
       this.homeWindow.close()
@@ -289,19 +295,37 @@ export class ZheXue {
   }
 
   async save_cookies(cookies: string) {
-    await fs.promises.writeFile(path.join(app.getPath('userData'), 'cookie.json'), cookies)
+    await fs.promises.writeFile(this.cookieFilePath, cookies)
   }
 
   async get_cookies(): Promise<Electron.Cookie[]> {
-    const filePath = path.join(app.getPath('userData'), 'cookie.json')
     try {
-      await fs.promises.access(filePath)
+      await fs.promises.access(this.cookieFilePath)
     }
     catch (error) {
-      throw new Error('cookie文件不存在，请重新登录')
+      throw new Error('cookie文件不存在，请点击登录')
     }
-    const fileContent = await fs.promises.readFile(filePath, 'utf-8')
+    const fileContent = await fs.promises.readFile(this.cookieFilePath, 'utf-8')
     return JSON.parse(fileContent)
+  }
+
+  async autoScroll(page: Page) {
+    await page.evaluate(async () => {
+      await new Promise<void>((resolve, _reject) => {
+        let totalHeight = 0
+        const distance = 50
+        const timer = setInterval(() => {
+          const scrollHeight = document.body.scrollHeight
+          window.scrollBy(0, distance)
+          totalHeight += distance
+
+          if (totalHeight >= scrollHeight) {
+            clearInterval(timer)
+            resolve()
+          }
+        }, 200)
+      })
+    })
   }
 }
 

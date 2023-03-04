@@ -3,7 +3,12 @@ import UserInfo from './components/UserInfo.vue'
 </script>
 
 <template>
-  <UserInfo />
+  <el-container>
+    <el-header>浙里学习</el-header>
+    <el-main>
+      <UserInfo />
+    </el-main>
+  </el-container>
 </template>
 
 <style>
