@@ -1,11 +1,16 @@
 import { BrowserWindow } from 'electron'
 import { Injectable, Window } from 'einf'
 import { ZheXue } from './Study'
+import { OrmService } from './db/OrmService'
+import { CourseModel } from './db/models/CourseModel'
+
 @Injectable()
 export class AppService {
   private stu: ZheXue
+  private orm: OrmService
   constructor(@Window() private win: BrowserWindow) {
     this.stu = new ZheXue(win)
+    this.orm = OrmService.getInstance()
   }
 
   public async login(): Promise<IpcResponse<String>> {
@@ -31,8 +36,17 @@ export class AppService {
 
   public async get_courses(page: number): Promise<IpcResponse<Course[]>> {
     try {
-      const courses = await this.stu.getCourses(page)
-      return { data: courses }
+      const couresModels = await this.orm.findCourse(page)
+      if (couresModels && couresModels.length > 0) {
+        const courses = couresModels.map(coures => coures.toCourse())
+        return { data: courses }
+      }
+      else {
+        const courses = await this.stu.getCourses(page)
+        const courseModels = courses.map(course => convertCourseToCourseModel(course))
+        this.orm.saveList(courseModels)
+        return { data: courses }
+      }
     }
     catch (error) {
       return { error }
@@ -58,4 +72,15 @@ export class AppService {
       return { error }
     }
   }
+}
+
+function convertCourseToCourseModel(course: Course): CourseModel {
+  const courseModel = new CourseModel()
+  courseModel.userId = 1
+  courseModel.name = course.name
+  courseModel.url = course.url
+  courseModel.imgUrl = course.imgUrl
+  courseModel.progress = course.progress || 0
+  courseModel.videoNum = course.videoNum
+  return courseModel
 }

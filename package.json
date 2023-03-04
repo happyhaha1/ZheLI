@@ -14,9 +14,11 @@
     "test:main": "vitest run -r src/main --passWithNoTests",
     "test:e2e": "vitest run",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+    "postuninstall": "electron-builder install-app-deps",
+    "rebuild": "electron-rebuild -f -w better-sqlite3"
   },
   "dependencies": {
+    "better-sqlite3": "^8.1.0",
     "einf": "^1.4.0",
     "element-plus": "^2.2.33",
     "luxon": "^3.2.1",
@@ -25,6 +27,7 @@
     "pinia-plugin-persistedstate": "^3.1.0",
     "puppeteer-core": "^19.7.2",
     "puppeteer-in-electron": "^3.0.5",
+    "typeorm": "^0.3.12",
     "vue": "^3.2.47"
   },
   "devDependencies": {
@@ -35,6 +38,7 @@
     "@vue/test-utils": "2.3.0",
     "electron": "23.1.1",
     "electron-builder": "23.6.0",
+    "electron-rebuild": "^3.2.9",
     "eslint": "8.35.0",
     "happy-dom": "8.9.0",
     "lint-staged": "13.1.2",
