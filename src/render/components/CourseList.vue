@@ -25,8 +25,7 @@ const formatQuantity = (quantity: Course): string => {
 }
 // 选中数据在左侧列表展示
 function handleSelect(selectData) {
-//   console.log(selectData)
-//   defaultData.listData = val
+  coursesStore.selectionCouers = selectData
 }
 </script>
 

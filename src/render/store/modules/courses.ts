@@ -10,6 +10,7 @@ export const useCoursesStore = defineStore('courses', {
         pageSize: 20,
         total: 1820,
       },
+      selectionCouers: [],
     }
   },
   getters: {
