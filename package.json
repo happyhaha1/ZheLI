@@ -15,7 +15,8 @@
     "test:e2e": "vitest run",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "rebuild": "electron-rebuild -f -w better-sqlite3"
+    "rebuild": "electron-rebuild -f -w better-sqlite3",
+    "devtools": "./node_modules/.bin/vue-devtools"
   },
   "dependencies": {
     "better-sqlite3": "^8.1.0",
@@ -35,6 +36,7 @@
     "@types/luxon": "^3.2.0",
     "@vitejs/plugin-vue": "4.0.0",
     "@vue/compiler-sfc": "3.2.47",
+    "@vue/devtools": "^6.5.0",
     "@vue/test-utils": "2.3.0",
     "electron": "23.1.1",
     "electron-builder": "23.6.0",

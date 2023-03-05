@@ -24,13 +24,8 @@ export class ZheXue {
 
     constructor(private win: BrowserWindow, private chromePath: string = '', private show = false) {
         if (!app.isPackaged) {
-            // this.cookieFilePath = path.join(app.getPath('userData'), '/data/cookie.json')
-            // this.userFilePath = path.join(app.getPath('userData'), '/data/cookie.json')
-            // console.log(app.getAppPath())
-            // try {
-            // } catch (error) {
-            //     console.log(error)
-            // }
+            this.cookieFilePath = path.join(app.getAppPath(), '/data/cookie.json')
+            this.userFilePath = path.join(app.getAppPath(), '/data/cookie.json')
         }
     }
 
