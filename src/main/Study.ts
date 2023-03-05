@@ -31,7 +31,20 @@ export class ZheXue {
 
     private async ensureBrowserInitialized() {
         if (!this.browser)
-            this.browser = await pie.connect(app, await import('puppeteer-core'))
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            this.browser = await pie.connect(app, require('puppeteer-core'))
+        // 判断是否登录了
+        if (!this.homeWindow) {
+            const browserWindow = new BrowserWindow({
+                show: this.show,
+            })
+            this.homeWindow = browserWindow
+            this.homePage = await pie.getPage(this.browser, browserWindow)
+            this.homeWindow.addListener('closed', () => {
+                this.homeWindow = undefined
+                this.homePage = undefined
+            })
+        }
     }
 
     async login() {
@@ -79,18 +92,6 @@ export class ZheXue {
     async getUserInfoByBrowser(): Promise<User> {
         await this.ensureBrowserInitialized()
         const cookies = await this.get_cookies()
-        // 判断是否登录了
-        if (!this.homeWindow) {
-            const browserWindow = new BrowserWindow({
-                show: this.show,
-            })
-            this.homeWindow = browserWindow
-            this.homePage = await pie.getPage(this.browser, browserWindow)
-            this.homeWindow.addListener('closed', () => {
-                this.homeWindow = undefined
-                this.homePage = undefined
-            })
-        }
 
         if (cookies) {
             cookies.forEach(async (cookie, _) => {
@@ -136,9 +137,6 @@ export class ZheXue {
             this.searchPage = await pie.getPage(this.browser, browserWindow)
         }
         await this.searchPage.goto(`${this.url}/search?keyword=${encodeURI(name)}`)
-
-    //
-    // this.searchWindow.close()
     }
 
     async getCourses(page: number): Promise<Course[]> {
@@ -329,7 +327,7 @@ export class ZheXue {
         this.show = show
     }
 
-    async autoScroll(page: Page) {
+    async autoScroll(page: any) {
         await page.evaluate(async () => {
             await new Promise<void>((resolve, _reject) => {
                 let totalHeight = 0

@@ -15,7 +15,7 @@
     "test:e2e": "vitest run",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "rebuild": "electron-rebuild -f -w better-sqlite3",
+    "rebuild": "electron-rebuild -f -w better-sqlite3 puppeteer-core",
     "devtools": "./node_modules/.bin/vue-devtools"
   },
   "dependencies": {
