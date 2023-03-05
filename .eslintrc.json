@@ -4,8 +4,12 @@
     {
       "files": "src/main/**/*.ts",
       "rules": {
-        "@typescript-eslint/consistent-type-imports": "off",
-        "indent": ["error", 4],
+        "@typescript-eslint/consistent-type-imports": "off"
+      }
+    },
+    {
+      "files": "*",
+      "rules": {
         "@typescript-eslint/indent": ["error", 4],
         "@typescript-eslint/brace-style": ["error", "1tbs", { "allowSingleLine": true }]
       }

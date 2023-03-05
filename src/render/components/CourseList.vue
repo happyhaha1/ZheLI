@@ -3,29 +3,28 @@
 import { useCoursesStore } from '@render/store'
 import { ElMessage } from 'element-plus'
 defineProps({
-  isLoggedIn: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
+    isLoggedIn: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
 })
 
 const coursesStore = useCoursesStore()
 
 async function loadData() {
-  try {
-    await coursesStore.get_courses()
-  }
-  catch (error) {
-    ElMessage.error(error.message)
-  }
+    try {
+        await coursesStore.get_courses()
+    } catch (error) {
+        ElMessage.error(error.message)
+    }
 }
 const formatQuantity = (quantity: Course): string => {
-  return `全${quantity.videoNum}集`
+    return `全${quantity.videoNum}集`
 }
 // 选中数据在左侧列表展示
 function handleSelect(selectData) {
-  coursesStore.selectionCouers = selectData
+    coursesStore.selectionCouers = selectData
 }
 </script>
 

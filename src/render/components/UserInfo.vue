@@ -9,40 +9,37 @@ const ipc = useIpc()
 const userStore = useUserStore()
 const appStore = useAppStore()
 async function loadData() {
-  try {
-    await userStore.info()
-  }
-  catch (error) {
-    ElMessage.error(error.message)
-  }
+    try {
+        await userStore.info()
+    } catch (error) {
+        ElMessage.error(error.message)
+    }
 }
 
 function login() {
-  ipc.send('login')
+    ipc.send('login')
 }
 ipc.on('login_success', async () => {
-  await loadData()
+    await loadData()
 })
 async function logout() {
-  try {
-    await userStore.logout()
-    ElMessage.success('退出成功')
-  }
-  catch (error) {
-    ElMessage.error(error.message)
-  }
+    try {
+        await userStore.logout()
+        ElMessage.success('退出成功')
+    } catch (error) {
+        ElMessage.error(error.message)
+    }
 }
 onMounted(async () => {
-  await loadData()
+    await loadData()
 })
 async function handleChange() {
-  try {
-    await appStore.chageShow()
-    ElMessage.success('修改成功')
-  }
-  catch (error) {
-    ElMessage.error(error.message)
-  }
+    try {
+        await appStore.chageShow()
+        ElMessage.success('修改成功')
+    } catch (error) {
+        ElMessage.error(error.message)
+    }
 }
 </script>
 

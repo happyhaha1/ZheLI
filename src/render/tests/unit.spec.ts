@@ -3,25 +3,25 @@ import { expect, test, vi } from 'vitest'
 import HelloWorld from '../components/User.vue'
 
 vi.mock('../api', () => ({
-  sendMsgToMainProcess: vi.fn(),
+    sendMsgToMainProcess: vi.fn(),
 }))
 
 vi.mock('../plugins/ipc', () => ({
-  useIpc: vi.fn(() => ({
-    on: vi.fn(),
-  })),
+    useIpc: vi.fn(() => ({
+        on: vi.fn(),
+    })),
 }))
 
 /**
  * @vitest-environment happy-dom
  */
 test('HelloWorld component', async () => {
-  expect(HelloWorld).toBeTruthy()
-  const wrapper = mount(HelloWorld)
+    expect(HelloWorld).toBeTruthy()
+    const wrapper = mount(HelloWorld)
 
-  const msgInput = wrapper.get<HTMLInputElement>('input')
+    const msgInput = wrapper.get<HTMLInputElement>('input')
 
-  const msg = 'msg from unit test'
-  await msgInput.setValue(msg)
-  expect(msgInput.element.value).toBe(msg)
+    const msg = 'msg from unit test'
+    await msgInput.setValue(msg)
+    expect(msgInput.element.value).toBe(msg)
 })

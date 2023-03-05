@@ -5,6 +5,6 @@ import piniaStore from './store'
 import App from './App.vue'
 
 createApp(App)
-  .use(ElementPlus)
-  .use(piniaStore)
-  .mount('#app')
+    .use(ElementPlus)
+    .use(piniaStore)
+    .mount('#app')
