@@ -18,8 +18,7 @@ async function electronAppInit() {
                 if (data === 'graceful-exit')
                     app.exit()
             })
-        }
-        else {
+        } else {
             process.on('SIGTERM', () => {
                 app.exit()
             })
@@ -39,8 +38,7 @@ async function bootstrap() {
                 inject: !app.isPackaged,
             }],
         })
-    }
-    catch (error) {
+    } catch (error) {
         console.error(error)
         app.quit()
     }

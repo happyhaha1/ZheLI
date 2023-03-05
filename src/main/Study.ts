@@ -18,11 +18,21 @@ export class ZheXue {
     private searchWindow?: BrowserWindow
     private searchPage?: Page
 
-    private readonly cookieFilePath: string = path.join(app.getPath('userData'), '/data/cookie.json')
-    private readonly userFilePath: string = path.join(app.getPath('userData'), '/data/userInfo.json')
+    private cookieFilePath: string = path.join(app.getPath('userData'), '/data/cookie.json')
+    private userFilePath: string = path.join(app.getPath('userData'), '/data/userInfo.json')
     private readonly url: string = 'https://www.zjce.gov.cn'
 
-    constructor(private win: BrowserWindow, private chromePath: string = '', private show = false) {}
+    constructor(private win: BrowserWindow, private chromePath: string = '', private show = false) {
+        if (!app.isPackaged) {
+            // this.cookieFilePath = path.join(app.getPath('userData'), '/data/cookie.json')
+            // this.userFilePath = path.join(app.getPath('userData'), '/data/cookie.json')
+            // console.log(app.getAppPath())
+            // try {
+            // } catch (error) {
+            //     console.log(error)
+            // }
+        }
+    }
 
     private async ensureBrowserInitialized() {
         if (!this.browser)
@@ -66,8 +76,7 @@ export class ZheXue {
             await fs.promises.access(this.userFilePath)
             const userInfo = await fs.promises.readFile(this.userFilePath, 'utf-8')
             return JSON.parse(userInfo)
-        }
-        catch (error) {
+        } catch (error) {
             return null
         }
     }
@@ -222,8 +231,7 @@ export class ZheXue {
                         })
                     })
                 })
-            }
-            else {
+            } else {
                 const video: Video = {
                     index: 0,
                     name: course.name,
@@ -267,8 +275,7 @@ export class ZheXue {
 
         if (course.progress === 100) {
             return true
-        }
-        else {
+        } else {
             const vedioStatus = await this.videoPage.$('.dplayer-playing')
             if (!vedioStatus) {
                 // 点击播放按钮
@@ -315,8 +322,7 @@ export class ZheXue {
     async get_cookies(): Promise<Electron.Cookie[]> {
         try {
             await fs.promises.access(this.cookieFilePath)
-        }
-        catch (error) {
+        } catch (error) {
             throw new Error('cookie文件不存在，请点击登录')
         }
         const fileContent = await fs.promises.readFile(this.cookieFilePath, 'utf-8')

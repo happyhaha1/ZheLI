@@ -17,8 +17,7 @@ export class AppService {
         try {
             await this.stu.login()
             return { data: '登录成功' }
-        }
-        catch (error) {
+        } catch (error) {
             return { error }
         }
     }
@@ -27,8 +26,7 @@ export class AppService {
         try {
             const userInfo = await this.stu.getUserInfoByFile()
             return { data: userInfo }
-        }
-        catch (error) {
+        } catch (error) {
             return { error }
         }
     }
@@ -39,15 +37,13 @@ export class AppService {
             if (couresModels && couresModels.length > 0) {
                 const courses = couresModels.map(coures => coures.toCourse())
                 return { data: courses }
-            }
-            else {
+            } else {
                 const courses = await this.stu.getCourses(page)
                 const courseModels = courses.map(course => convertCourseToCourseModel(course))
                 this.orm.saveList(courseModels)
                 return { data: courses }
             }
-        }
-        catch (error) {
+        } catch (error) {
             return { error }
         }
     }
@@ -56,8 +52,7 @@ export class AppService {
         try {
             await this.stu.chageShow(show)
             return { data: '切换成功' }
-        }
-        catch (error) {
+        } catch (error) {
             return { error }
         }
     }
@@ -66,8 +61,7 @@ export class AppService {
         try {
             await this.stu.logout()
             return { data: '退出登录成功' }
-        }
-        catch (error) {
+        } catch (error) {
             return { error }
         }
     }
