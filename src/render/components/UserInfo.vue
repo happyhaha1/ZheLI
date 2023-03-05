@@ -53,10 +53,16 @@ async function handleChange() {
     </el-col>
     <el-col :span="20">
       <div class="name">
+        {{ userStore.company }}
         {{ userStore.name }}
       </div>
       <div class="company">
-        {{ userStore.company }}
+        <el-button class="btn" @click="logout">
+          同步用户信息
+        </el-button>
+        <el-button class="btn" @click="logout">
+          同步课程信息
+        </el-button>
       </div>
       <div class="logout">
         <el-switch

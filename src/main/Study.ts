@@ -18,7 +18,8 @@ export class ZheXue {
   private searchWindow?: BrowserWindow
   private searchPage?: Page
 
-  private readonly cookieFilePath: string = path.join(app.getPath('userData'), 'cookie.json')
+  private readonly cookieFilePath: string = path.join(app.getPath('userData'), '/data/cookie.json')
+  private readonly userFilePath: string = path.join(app.getPath('userData'), '/data/userInfo.json')
   private readonly url: string = 'https://www.zjce.gov.cn'
 
   constructor(private win: BrowserWindow, private chromePath: string = '', private show = false) {}
@@ -60,9 +61,20 @@ export class ZheXue {
     await this.loginPage.goto(`${this.url}/login`)
   }
 
-  async getUserInfo(cookies: Electron.Cookie[]): Promise<User> {
-    await this.ensureBrowserInitialized()
+  async getUserInfoByFile(): Promise<User> {
+    try {
+      await fs.promises.access(this.userFilePath)
+      const userInfo = await fs.promises.readFile(this.userFilePath, 'utf-8')
+      return JSON.parse(userInfo)
+    }
+    catch (error) {
+      return null
+    }
+  }
 
+  async getUserInfoByBrowser(): Promise<User> {
+    await this.ensureBrowserInitialized()
+    const cookies = await this.get_cookies()
     // 判断是否登录了
     if (!this.homeWindow) {
       const browserWindow = new BrowserWindow({
@@ -103,7 +115,8 @@ export class ZheXue {
     const avatarUrl = await this.homePage.$eval('.for-avatar img', el =>
       el.getAttribute('src'),
     )
-
+    const user = { name, company, avatarUrl }
+    await fs.promises.writeFile(this.userFilePath, JSON.stringify(user))
     return { name, company, avatarUrl }
   }
 

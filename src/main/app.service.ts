@@ -25,8 +25,7 @@ export class AppService {
 
   public async get_user_info(): Promise<IpcResponse<User>> {
     try {
-      const cookies = await this.stu.get_cookies()
-      const userInfo = await this.stu.getUserInfo(cookies)
+      const userInfo = await this.stu.getUserInfoByFile()
       return { data: userInfo }
     }
     catch (error) {

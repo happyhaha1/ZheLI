@@ -5,11 +5,14 @@ export class UserModel {
   @PrimaryColumn({ type: 'int' })
   id: number | undefined
 
-  @Column({ type: 'int8', nullable: false })
-  userName: number | undefined
+  @Column({ type: 'text', nullable: false })
+  name: number | undefined
 
   @Column({ type: 'text', nullable: false })
-  content: string | undefined
+  company: number | undefined
+
+  @Column({ type: 'text', nullable: false })
+  avatarUrl: string | undefined
 
   @Column({ type: 'text', nullable: false })
   cookie: string | undefined
