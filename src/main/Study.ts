@@ -24,8 +24,8 @@ export class ZheXue {
 
     constructor(private win: BrowserWindow, private chromePath: string = '', private show = false) {
         if (!app.isPackaged) {
-            this.cookieFilePath = path.join(app.getAppPath(), '/data/cookie.json')
-            this.userFilePath = path.join(app.getAppPath(), '/data/cookie.json')
+            this.cookieFilePath = path.join(app.getAppPath(), '../data/cookie.json')
+            this.userFilePath = path.join(app.getAppPath(), '../data/userInfo.json')
         }
     }
 
@@ -33,7 +33,7 @@ export class ZheXue {
         if (!this.browser)
             // eslint-disable-next-line @typescript-eslint/no-var-requires
             this.browser = await pie.connect(app, require('puppeteer-core'))
-        // 判断是否登录了
+
         if (!this.homeWindow) {
             const browserWindow = new BrowserWindow({
                 show: this.show,
@@ -44,6 +44,17 @@ export class ZheXue {
                 this.homeWindow = undefined
                 this.homePage = undefined
             })
+            const cookies = await this.get_cookies()
+
+            if (cookies) {
+                cookies.forEach(async (cookie, _) => {
+                    await this.homePage.setCookie({
+                        name: cookie.name,
+                        value: cookie.value,
+                        domain: cookie.domain,
+                    })
+                })
+            }
         }
     }
 
@@ -91,17 +102,6 @@ export class ZheXue {
 
     async getUserInfoByBrowser(): Promise<User> {
         await this.ensureBrowserInitialized()
-        const cookies = await this.get_cookies()
-
-        if (cookies) {
-            cookies.forEach(async (cookie, _) => {
-                await this.homePage.setCookie({
-                    name: cookie.name,
-                    value: cookie.value,
-                    domain: cookie.domain,
-                })
-            })
-        }
 
         await this.homePage.goto(`${this.url}/personalCenter/creditArchive`)
         await this.homePage.waitForNetworkIdle()

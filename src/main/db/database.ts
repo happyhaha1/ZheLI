@@ -11,11 +11,19 @@ export class DataBase {
 
     // 初始化数据库文件
     constructor(database: string) {
-        const basePath = path.join(
-            app.getPath('appData'),
-            app.getName(),
-            `./data/${database}.db`,
-        )
+        let basePath = ''
+        if (app.isPackaged) {
+            basePath = path.join(
+                app.getPath('appData'),
+                app.getName(),
+                `./data/${database}.db`,
+            )
+        } else {
+            basePath = path.join(
+                app.getAppPath(),
+                `../data/${database}.db`,
+            )
+        }
         const options: BetterSqlite3ConnectionOptions = {
             type: 'better-sqlite3',
             entities: [CourseModel, VideoModel, UserModel],

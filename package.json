@@ -5,8 +5,9 @@
   "description": "Vite + Electron with esbuild, so fast! ⚡",
   "main": "dist/main/index.js",
   "scripts": {
-    "dev": "rimraf dist && vite",
-    "build": "rimraf dist && vite build",
+    "vite": "vite",
+    "dev": "node ./src/common/devtools.js",
+    "build": "rimraf dist/!(data) && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "npm run test:main && npm run test:render",
@@ -16,7 +17,7 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "rebuild": "electron-rebuild -f -w better-sqlite3 puppeteer-core",
-    "devtools": "./node_modules/.bin/vue-devtools"
+    "vue-devtools": "./node_modules/.bin/vue-devtools"
   },
   "dependencies": {
     "better-sqlite3": "^8.1.0",
@@ -47,6 +48,7 @@
     "playwright": "1.31.2",
     "pnpm": "7.28.0",
     "rimraf": "4.2.0",
+    "rollup-plugin-delete": "^2.0.0",
     "simple-git-hooks": "2.8.1",
     "tslib": "2.5.0",
     "typescript": "4.9.5",
