@@ -7,21 +7,21 @@ import { CourseModel } from './models/CourseModel'
 import { VideoModel } from './models/VideoModel'
 
 export class DataBase {
-  dataSource: DataSource
+    dataSource: DataSource
 
-  // 初始化数据库文件
-  constructor(database: string) {
-    const basePath = path.join(
-      app.getPath('appData'),
-      app.getName(),
-      `./data/${database}.db`,
-    )
-    const options: BetterSqlite3ConnectionOptions = {
-      type: 'better-sqlite3',
-      entities: [CourseModel, VideoModel, UserModel],
-      database: basePath,
-      synchronize: true,
+    // 初始化数据库文件
+    constructor(database: string) {
+        const basePath = path.join(
+            app.getPath('appData'),
+            app.getName(),
+            `./data/${database}.db`,
+        )
+        const options: BetterSqlite3ConnectionOptions = {
+            type: 'better-sqlite3',
+            entities: [CourseModel, VideoModel, UserModel],
+            database: basePath,
+            synchronize: true,
+        }
+        this.dataSource = new DataSource(options)
     }
-    this.dataSource = new DataSource(options)
-  }
 }
