@@ -38,7 +38,18 @@ export const useCoursesStore = defineStore('courses', {
             this.get_courses()
         },
         async study() {
-            const { data } = await ipcInstance.send<number>('study')
+            await ipcInstance.send<string>('study', JSON.stringify(this.selectionCouers))
+        },
+        async receive(course: Course, percentage: number) {
+            if (percentage === 100) {
+                this.isStudy = false
+                this.get_courses()
+            } else {
+                this.$patch({
+                    currentVideo: course.currentVideo,
+                    allProgress: percentage,
+                })
+            }
         },
     },
 })

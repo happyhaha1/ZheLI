@@ -42,6 +42,12 @@ export class AppController {
         return this.appService.change_show(show)
     }
 
+    @IpcHandle('study')
+    public async study(data: string): Promise<IpcResponse<string>> {
+        const courses: Course[] = JSON.parse(data)
+        return this.appService.study(courses)
+    }
+
     @IpcHandle('logout')
     public async logout(): Promise<IpcResponse<string>> {
         return this.appService.logout()

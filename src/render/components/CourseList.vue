@@ -45,8 +45,8 @@ const messageOptions = {
     message: () => h('p', [
         '本次学习总进度',
         h(ElProgress, { percentage: coursesStore.allProgress }),
-        '当前正在学习的视频进度',
-        h(ElProgress, { percentage: coursesStore.allProgress })]),
+        `${coursesStore.currentVideo ? `当前正在学习${coursesStore.currentVideo.name}的视频进度` : '未开始'}`,
+        h(ElProgress, { percentage: coursesStore.currentVideo ? coursesStore.currentVideo.progress : 0 })]),
     closeOnClickModal: false,
     closeOnPressEscape: false,
     showCancelButton: true,

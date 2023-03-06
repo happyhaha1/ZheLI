@@ -84,6 +84,40 @@ export class AppService {
             return { error }
         }
     }
+
+    public async study(courses: Course[]): Promise<IpcResponse<string>> {
+        try {
+            const course = courses.pop()
+            await this.stu.play(course)
+            await this.studyNoSync(course, courses)
+            return { data: '启动成功' }
+        } catch (error) {
+            return { error }
+        }
+    }
+
+    public async studyNoSync(course: Course, courses: Course[]) {
+        while (true) {
+            await new Promise(resolve => setTimeout(resolve, 1000))
+            const finish = await this.stu.play(course)
+            if (finish && courses.length === 0) {
+                this.win.webContents.send('current_study_state', course, 100)
+                break
+            } else if (finish && courses.length > 0) {
+                const nextCourse = courses.pop()
+                await this.studyNoSync(nextCourse, courses)
+            } else {
+                const totalProgress = courses.reduce((total, course) => {
+                    if (course.progress !== undefined)
+                        return total + course.progress
+                    else
+                        return total
+                }, 0)
+                const percentage = Math.floor(totalProgress + course.progress / (courses.length + 1))
+                this.win.webContents.send('current_study_state', course, percentage)
+            }
+        }
+    }
 }
 
 function convertCourseToCourseModel(course: Course, models: CourseModel[]): CourseModel {

@@ -20,7 +20,7 @@ export class ZheXue {
     private userFilePath: string = path.join(app.getPath('userData'), '/data/userInfo.json')
     private readonly url: string = 'https://www.zjce.gov.cn'
 
-    constructor(private win: BrowserWindow, private chromePath: string = '', private show = false) {
+    constructor(private win: BrowserWindow, private chromePath: string = '', private show = true) {
         if (!app.isPackaged) {
             this.cookieFilePath = path.join(app.getAppPath(), '../data/cookie.json')
             this.userFilePath = path.join(app.getAppPath(), '../data/userInfo.json')
@@ -220,22 +220,31 @@ export class ZheXue {
             await this.videoPage.goto(this.url + course.url)
             await this.videoPage.waitForNetworkIdle()
             course.videos = []
-            course.videos.length = course.videoNum
             if (course.videoNum > 1) {
                 // 需要获取视频的链接
-                await this.videoPage.$$eval('.set-content', (els) => {
-                    els.forEach((el, index) => {
-                        const name = el.querySelector('.right .set-title').textContent
-                        const progressStr = el.querySelector('.right .set-progress').textContent
-                        const match = progressStr.match(/\d+/)
-                        const progress = match ? parseInt(match[0], 10) : 0
-                        course.videos.push({
-                            index,
-                            name,
-                            progress,
-                        })
+                // await this.videoPage.$$eval('.set-content', (els) => {
+                //     els.forEach((el, index) => {
+                //         const name = el.querySelector('.right .set-title').textContent
+                //         const progressStr = el.querySelector('.right .set-progress').textContent
+                //         const match = progressStr.match(/\d+/)
+                //         const progress = match ? parseInt(match[0], 10) : 0
+                //         console.log(name)
+                //         course.videos.push({
+                //             index,
+                //             name,
+                //             progress,
+                //         })
+                //     })
+                // })
+
+                const titles = await this.videoPage.$$eval('.set-content .right .set-title', els => els.map(el => el.textContent))
+                for (let t = 0; t < titles.length; t++) {
+                    course.videos.push({
+                        index: t,
+                        name: titles[t],
+                        progress: 0,
                     })
-                })
+                }
             } else {
                 const video: Video = {
                     index: 0,
@@ -272,10 +281,10 @@ export class ZheXue {
         course.videos[currentVideo.index].dtime = dtimelong
         course.videos[currentVideo.index].ntime = ntimelong
         course.videos[currentVideo.index].progress = videoProgress
-
-        // if (videoProgress == 100) {
+        
+        course.currentVideo = currentVideo
+        // if (videoProgress === 100) {
         //     //播放下一集
-        //     incompleteVideos.s
         // }
 
         if (course.progress === 100) {

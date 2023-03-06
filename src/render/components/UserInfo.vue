@@ -32,6 +32,10 @@ ipc.on('sync_current', async (count: number, allPage: number) => {
         coursesStore.syncProgress = Math.floor((count / allPage) * 100)
     }
 })
+ipc.on('current_study_state', async (course: Course, percentage: number) => {
+    // await loadData()
+    coursesStore.receive(course, percentage)
+})
 async function logout() {
     try {
         await userStore.logout()

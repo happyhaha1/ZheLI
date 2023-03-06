@@ -22,7 +22,8 @@ declare global {
     videos?: Array<Video>
     progress?: number
     videoNum: number
-    frist: boolean
+    frist: boolean,
+    currentVideo?: Video
   }
   
   interface Video {
