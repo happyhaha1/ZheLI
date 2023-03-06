@@ -48,8 +48,8 @@ function handleSelect(selectData) {
       v-loading="coursesStore.$loading.get_courses" :data="coursesStore.cousers" style="width: 100%" height="250"
       @selection-change="handleSelect"
     >
-      <el-table-column fixed type="selection" width="30" />
-      <el-table-column label="课程图片" width="110">
+      <el-table-column fixed type="selection" />
+      <el-table-column label="课程图片">
         <template #default="{ row }">
           <img :src="row.imgUrl" alt="img" style="width: 100px; height: 60px;">
         </template>
@@ -59,18 +59,20 @@ function handleSelect(selectData) {
           <a :href="`https://www.zjce.gov.cn${row.url}`" target="_blank">{{ row.name }}</a>
         </template>
       </el-table-column>
-      <el-table-column prop="videoNum" label="视频数量" :formatter="formatQuantity" width="100" />
-      <el-table-column prop="progress" label="视频进度" :formatter="formatProgress" width="100" />
+      <el-table-column prop="videoNum" label="视频数量" :formatter="formatQuantity" />
+      <el-table-column prop="progress" label="视频进度" :formatter="formatProgress" />
     </el-table>
     <el-pagination
       v-model:current-page="coursesStore.meta.pageNo"
       v-model:page-size="coursesStore.meta.pageSize"
+      class="pagination-wrapper"
       layout="sizes, prev, pager, next, total"
       :total="coursesStore.meta.total"
       :page-sizes="[10, 20, 30]"
       @current-change="loadData"
       @size-change="loadData"
     />
+
     <div v-if="!coursesStore.$loading.get_courses" style="margin-top: 20px">
       <el-button>
         开始学习
@@ -79,7 +81,12 @@ function handleSelect(selectData) {
   </div>
 </template>
 
-<style>
+<style scoped>
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
 a {
   color: inherit; /* 继承父元素的文本颜色 */
   text-decoration: none; /* 去掉下划线 */

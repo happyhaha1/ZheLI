@@ -80,7 +80,7 @@ async function syncCourse() {
         {{ userStore.name }}
       </div>
       <div class="company">
-        <el-button class="btn" @click="syncUserInfo">
+        <el-button class="btn" :disabled="coursesStore.isSync" @click="syncUserInfo">
           同步用户信息
         </el-button>
         <el-button class="btn" type="primary" :loading="coursesStore.isSync" @click="syncCourse">

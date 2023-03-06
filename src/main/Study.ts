@@ -148,9 +148,7 @@ export class ZheXue {
             await this.homePage.goto(`${this.url}/videos`)
             await this.homePage.waitForNetworkIdle()
         }
-        console.log(page)
         const paginationItem = await this.homePage.$(`li[title="${page}"]`)
-        console.log(paginationItem)
         // Click the pagination item
         await paginationItem.click()
         await this.homePage.waitForNetworkIdle()
