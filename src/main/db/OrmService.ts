@@ -33,6 +33,7 @@ export class OrmService {
 
         const [couseModels, count] = await this.dataSource.getRepository(CourseModel)
             .createQueryBuilder('course')
+            .where('course.progress != :progress', { progress: 100 })
             .skip(skip)
             .take(take)
             .getManyAndCount()

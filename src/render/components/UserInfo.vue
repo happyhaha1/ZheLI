@@ -83,7 +83,7 @@ async function syncCourse() {
         <el-button class="btn" :disabled="coursesStore.isSync" @click="syncUserInfo">
           同步用户信息
         </el-button>
-        <el-button class="btn" type="primary" :loading="coursesStore.isSync" @click="syncCourse">
+        <el-button class="btn" type="primary" :loading="coursesStore.isSync" :disabled="userStore.$loading.syncInfo" @click="syncCourse">
           同步课程信息
         </el-button>
       </div>

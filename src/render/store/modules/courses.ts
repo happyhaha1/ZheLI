@@ -13,6 +13,9 @@ export const useCoursesStore = defineStore('courses', {
             selectionCouers: [],
             isSync: false,
             syncProgress: 0,
+            currentVideo: null,
+            allProgress: 0,
+            isStudy: false,
         }
     },
     getters: {
@@ -33,6 +36,9 @@ export const useCoursesStore = defineStore('courses', {
             const { data } = await ipcInstance.send<number>('sync_courses')
             this.syncProgress = Math.floor((1 / data) * 100)
             this.get_courses()
+        },
+        async study() {
+            const { data } = await ipcInstance.send<number>('study')
         },
     },
 })

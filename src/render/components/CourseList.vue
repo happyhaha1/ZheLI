@@ -1,7 +1,9 @@
 <script setup lang="ts">
-// import { watch } from 'vue'
+import { h } from 'vue'
 import { useCoursesStore } from '@render/store'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox, ElProgress } from 'element-plus'
+import type { Action } from 'element-plus'
+
 defineProps({
     isLoggedIn: {
         type: Boolean,
@@ -34,14 +36,56 @@ const formatProgress = (quantity: Course): string => {
     return quantity.progress === 0 ? '未开始学习' : `${quantity.progress}%`
 }
 // 选中数据在左侧列表展示
-function handleSelect(selectData) {
+function handleSelect(selectData: Course[]) {
     coursesStore.selectionCouers = selectData
+}
+const messageOptions = {
+    title: '学习进度',
+    // Should pass a function if VNode contains dynamic props
+    message: () => h('p', [
+        '本次学习总进度',
+        h(ElProgress, { percentage: coursesStore.allProgress }),
+        '当前正在学习的视频进度',
+        h(ElProgress, { percentage: coursesStore.allProgress })]),
+    closeOnClickModal: false,
+    closeOnPressEscape: false,
+    showCancelButton: true,
+    showConfirmButton: true,
+    cancelButtonText: '停止学习',
+    confirmButtonText: '后台隐藏',
+    callback: (action: Action) => {
+        if (action === 'confirm') {
+            ElMessage({
+                type: 'info',
+                message: '你点击了隐藏按钮,你可以通过下方按钮点击查看进度',
+            })
+        } else if (action === 'cancel') {
+            coursesStore.get_courses()
+        }
+    },
+}
+function study() {
+    if (coursesStore.selectionCouers.length === 0) {
+        ElMessageBox.alert('你没有选择要学习的课程请先选择', '错误错误！！！！', {
+            confirmButtonText: '好的',
+        })
+    } else {
+        coursesStore.isStudy = true
+        ElMessageBox(messageOptions)
+        coursesStore.study()
+    }
+}
+function showMessage() {
+    ElMessageBox(messageOptions) // coursesStore.study()
 }
 </script>
 
 <template>
   <div v-if="coursesStore.isSync">
-    <el-progress :percentage="coursesStore.syncProgress" type="dashboard" :color="colors" />
+    <ElProgress
+      :percentage="coursesStore.syncProgress" :color="colors" :text-inside="true"
+      :stroke-width="24"
+    />
   </div>
   <div v-if="isLoggedIn">
     <el-table
@@ -74,8 +118,14 @@ function handleSelect(selectData) {
     />
 
     <div v-if="!coursesStore.$loading.get_courses" style="margin-top: 20px">
-      <el-button>
+      <p v-if="coursesStore.selectionCouers.length > 0">
+        你当前选中了{{ coursesStore.selectionCouers.length }}个课程
+      </p>
+      <el-button type="success" :disabled="coursesStore.isStudy" @click="study">
         开始学习
+      </el-button>
+      <el-button v-if="coursesStore.isStudy" type="success" @click="showMessage">
+        查看进度
       </el-button>
     </div>
   </div>
