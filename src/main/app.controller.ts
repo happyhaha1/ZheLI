@@ -32,6 +32,11 @@ export class AppController {
         return this.appService.get_courses(page, pagesize)
     }
 
+    @IpcHandle('sync_courses')
+    public async sync_courses(): Promise<IpcResponse<number>> {
+        return this.appService.syncCoures()
+    }
+
     @IpcHandle('change_show')
     public async change_show(show: boolean): Promise<IpcResponse<string>> {
         return this.appService.change_show(show)

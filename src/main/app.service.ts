@@ -46,11 +46,25 @@ export class AppService {
         }
     }
 
-    public async syncCoures() {
-        // const courses = await this.stu.getCourses()
-        // const courseModels = courses.map(course => convertCourseToCourseModel(course))
-        // this.orm.saveList(courseModels)
-        // return { data: courses }
+    public async syncCoures(): Promise<IpcResponse<number>> {
+        const pageconut = await this.stu.getCourseCount()
+        const allCourse = await this.orm.findAndDelCourseAll()
+        // console.log(pageconut)
+        const courses = await this.stu.getCourses(1)
+        const courseModels = courses.map(course => convertCourseToCourseModel(course, allCourse))
+        this.orm.saveList(courseModels)
+        this.syncCouresPage(pageconut, allCourse)
+        return { data: pageconut }
+    }
+
+    public async syncCouresPage(pagecount: number, models: CourseModel[]) {
+        for (let index = 2; index <= pagecount; index++) {
+            const courses = await this.stu.getCourses(index)
+            const courseModels = courses.map(course => convertCourseToCourseModel(course, models))
+            this.orm.saveList(courseModels)
+            // console.log()
+            this.win.webContents.send('sync_current', index, pagecount)
+        }
     }
 
     public async change_show(show: boolean): Promise<IpcResponse<string>> {
@@ -72,12 +86,15 @@ export class AppService {
     }
 }
 
-function convertCourseToCourseModel(course: Course): CourseModel {
+function convertCourseToCourseModel(course: Course, models: CourseModel[]): CourseModel {
     const courseModel = new CourseModel()
     courseModel.userId = 1
     courseModel.name = course.name
     courseModel.url = course.url
     courseModel.imgUrl = course.imgUrl
+    const courseWithUrl = models.find(v => v.url === course.url)
+    if (courseWithUrl)
+        course.progress = courseWithUrl.progress
     courseModel.progress = course.progress || 0
     courseModel.videoNum = course.videoNum
     return courseModel

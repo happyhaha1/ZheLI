@@ -40,4 +40,15 @@ export class OrmService {
         await this.dataSource.destroy()
         return { couseModels, count }
     }
+
+    async findAndDelCourseAll(): Promise<CourseModel[]> {
+        await this.dataSource.initialize()
+
+        const repository = await this.dataSource.getRepository(CourseModel)
+        const courses = await repository.find()
+        await repository.remove(courses)
+
+        await this.dataSource.destroy()
+        return courses
+    }
 }

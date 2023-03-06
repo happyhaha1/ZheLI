@@ -9,6 +9,13 @@ defineProps({
         default: false,
     },
 })
+const colors = [
+    { color: '#f56c6c', percentage: 20 },
+    { color: '#e6a23c', percentage: 40 },
+    { color: '#5cb87a', percentage: 60 },
+    { color: '#1989fa', percentage: 80 },
+    { color: '#6f7ad3', percentage: 100 },
+]
 
 const coursesStore = useCoursesStore()
 
@@ -22,6 +29,10 @@ async function loadData() {
 const formatQuantity = (quantity: Course): string => {
     return `全${quantity.videoNum}集`
 }
+
+const formatProgress = (quantity: Course): string => {
+    return quantity.progress === 0 ? '未开始学习' : `${quantity.progress}%`
+}
 // 选中数据在左侧列表展示
 function handleSelect(selectData) {
     coursesStore.selectionCouers = selectData
@@ -29,23 +40,27 @@ function handleSelect(selectData) {
 </script>
 
 <template>
+  <div v-if="coursesStore.isSync">
+    <el-progress :percentage="coursesStore.syncProgress" type="dashboard" :color="colors" />
+  </div>
   <div v-if="isLoggedIn">
     <el-table
-      v-loading="coursesStore.$loading.get_courses" :data="coursesStore.cousers" style="width: 100%"
+      v-loading="coursesStore.$loading.get_courses" :data="coursesStore.cousers" style="width: 100%" height="250"
       @selection-change="handleSelect"
     >
-      <el-table-column type="selection" />
-      <el-table-column label="课程图片">
+      <el-table-column fixed type="selection" width="30" />
+      <el-table-column label="课程图片" width="110">
         <template #default="{ row }">
           <img :src="row.imgUrl" alt="img" style="width: 100px; height: 60px;">
         </template>
       </el-table-column>
-      <el-table-column label="课程名字">
+      <el-table-column label="课程名字" width="200">
         <template #default="{ row }">
           <a :href="`https://www.zjce.gov.cn${row.url}`" target="_blank">{{ row.name }}</a>
         </template>
       </el-table-column>
-      <el-table-column prop="videoNum" label="视频数量" :formatter="formatQuantity" />
+      <el-table-column prop="videoNum" label="视频数量" :formatter="formatQuantity" width="100" />
+      <el-table-column prop="progress" label="视频进度" :formatter="formatProgress" width="100" />
     </el-table>
     <el-pagination
       v-model:current-page="coursesStore.meta.pageNo"

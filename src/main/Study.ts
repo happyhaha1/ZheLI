@@ -34,6 +34,8 @@ export class ZheXue {
 
         if (!this.homeWindow) {
             const browserWindow = new BrowserWindow({
+                width: 1200,
+                height: 600,
                 show: this.show,
             })
             this.homeWindow = browserWindow
@@ -142,11 +144,13 @@ export class ZheXue {
     async getCourses(page: number): Promise<Course[]> {
         await this.ensureBrowserInitialized()
 
-        await this.homePage.goto(`${this.url}/videos`)
-
-        await this.homePage.waitForNetworkIdle()
-
+        if (page === 1) {
+            await this.homePage.goto(`${this.url}/videos`)
+            await this.homePage.waitForNetworkIdle()
+        }
+        console.log(page)
         const paginationItem = await this.homePage.$(`li[title="${page}"]`)
+        console.log(paginationItem)
         // Click the pagination item
         await paginationItem.click()
         await this.homePage.waitForNetworkIdle()
@@ -190,6 +194,16 @@ export class ZheXue {
         })
 
         return courses
+    }
+
+    async getCourseCount(): Promise<number> {
+        await this.ensureBrowserInitialized()
+
+        await this.homePage.goto(`${this.url}/videos`)
+
+        await this.homePage.waitForNetworkIdle()
+        const courseCount = await this.homePage.$eval('.pagination li:nth-last-child(2)', el => el.textContent)
+        return parseInt(courseCount)
     }
 
     async play(course: Course): Promise<boolean> {

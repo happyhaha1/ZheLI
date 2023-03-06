@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useIpc } from '@render/plugins/ipc'
-import { useAppStore, useUserStore } from '@render/store'
+import { useAppStore, useCoursesStore, useUserStore } from '@render/store'
 import { ElMessage } from 'element-plus'
 import { onMounted } from 'vue'
 import CourseList from './CourseList.vue'
@@ -8,6 +8,7 @@ const ipc = useIpc()
 
 const userStore = useUserStore()
 const appStore = useAppStore()
+const coursesStore = useCoursesStore()
 async function loadData() {
     try {
         await userStore.info()
@@ -21,6 +22,15 @@ function login() {
 }
 ipc.on('login_success', async () => {
     await loadData()
+})
+ipc.on('sync_current', async (count: number, allPage: number) => {
+    await coursesStore.get_courses()
+    if (count === allPage) {
+        ElMessage.success('课程全部同步完全')
+        coursesStore.isSync = false
+    } else {
+        coursesStore.syncProgress = Math.floor((count / allPage) * 100)
+    }
 })
 async function logout() {
     try {
@@ -48,7 +58,14 @@ async function syncUserInfo() {
     } catch (error) {
         ElMessage.error(error.message)
     }
-    // 同步用户同步用户信息
+}
+async function syncCourse() {
+    try {
+        await coursesStore.sync_coures()
+        ElMessage.success('开始同步')
+    } catch (error) {
+        ElMessage.error(error.message)
+    }
 }
 </script>
 
@@ -66,7 +83,7 @@ async function syncUserInfo() {
         <el-button class="btn" @click="syncUserInfo">
           同步用户信息
         </el-button>
-        <el-button class="btn" @click="logout">
+        <el-button class="btn" type="primary" :loading="coursesStore.isSync" @click="syncCourse">
           同步课程信息
         </el-button>
       </div>
