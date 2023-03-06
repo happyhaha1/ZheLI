@@ -32,6 +32,9 @@ declare global {
     ntime?: number
     progress?: number
   }
+
+  class LoginFailedError extends Error {}
+  
   
 }
 

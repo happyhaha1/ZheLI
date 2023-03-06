@@ -5,8 +5,6 @@ import pie from 'puppeteer-in-electron'
 import { Duration } from 'luxon'
 import { Browser, Page } from 'puppeteer-core'
 
-export class LoginFailedError extends Error {}
-
 export class ZheXue {
     private browser?: Browser
     private loginWindow?: BrowserWindow
@@ -93,6 +91,10 @@ export class ZheXue {
     async getUserInfoByFile(): Promise<User> {
         try {
             await fs.promises.access(this.userFilePath)
+        } catch (error) {
+            return await this.getUserInfoByBrowser()
+        }
+        try {
             const userInfo = await fs.promises.readFile(this.userFilePath, 'utf-8')
             return JSON.parse(userInfo)
         } catch (error) {
@@ -316,7 +318,7 @@ export class ZheXue {
         try {
             await fs.promises.access(this.cookieFilePath)
         } catch (error) {
-            throw new Error('cookie文件不存在，请点击登录')
+            throw new LoginFailedError('cookie文件不存在，请点击登录')
         }
         const fileContent = await fs.promises.readFile(this.cookieFilePath, 'utf-8')
         return JSON.parse(fileContent)
