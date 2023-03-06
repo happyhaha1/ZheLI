@@ -30,5 +30,9 @@ export const useUserStore = defineStore('user', {
             await ipcInstance.send('logout')
             this.resetInfo()
         },
+        async syncInfo() {
+            const { data } = await ipcInstance.send('sync_info')
+            this.$patch(data)
+        },
     },
 })

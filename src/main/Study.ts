@@ -108,12 +108,10 @@ export class ZheXue {
         await this.homePage.goto(`${this.url}/personalCenter/creditArchive`)
         await this.homePage.waitForNetworkIdle()
 
-        // 检查是否成功登录
         const isLoggedIn = await this.homePage.$('.for-avatar')
         if (!isLoggedIn)
             throw new LoginFailedError('登录失效')
 
-        // 获取用户信.$eval('#search', el => el.value);息
         const name = await this.homePage.$eval('.big-name', el => el.textContent)
         const company = await this.homePage.$eval(
             '.name-mar:nth-of-type(3)',

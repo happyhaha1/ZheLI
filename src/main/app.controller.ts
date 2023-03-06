@@ -19,7 +19,12 @@ export class AppController {
 
     @IpcHandle('get_user_info')
     public async get_user_info(): Promise<IpcResponse<User>> {
-        return this.appService.get_user_info()
+        return this.appService.get_user_info(false)
+    }
+
+    @IpcHandle('sync_info')
+    public async sync_info(): Promise<IpcResponse<User>> {
+        return this.appService.get_user_info(true)
     }
 
     @IpcHandle('get_courses')

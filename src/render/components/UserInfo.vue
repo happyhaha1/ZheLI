@@ -41,6 +41,15 @@ async function handleChange() {
         ElMessage.error(error.message)
     }
 }
+async function syncUserInfo() {
+    try {
+        await userStore.syncInfo()
+        ElMessage.success('同步成功')
+    } catch (error) {
+        ElMessage.error(error.message)
+    }
+    // 同步用户同步用户信息
+}
 </script>
 
 <template>
@@ -54,7 +63,7 @@ async function handleChange() {
         {{ userStore.name }}
       </div>
       <div class="company">
-        <el-button class="btn" @click="logout">
+        <el-button class="btn" @click="syncUserInfo">
           同步用户信息
         </el-button>
         <el-button class="btn" @click="logout">
