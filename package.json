@@ -1,7 +1,7 @@
 {
   "name": "ZheLi",
   "version": "0.0.1",
-  "packageManager": "pnpm@7.28.0",
+  "packageManager": "yarn@3.4.1",
   "description": "Vite + Electron with esbuild, so fast! ⚡",
   "main": "dist/main/index.js",
   "scripts": {
@@ -44,12 +44,12 @@
     "electron-rebuild": "^3.2.9",
     "eslint": "8.35.0",
     "happy-dom": "8.9.0",
+    "husky": "^8.0.3",
     "lint-staged": "13.1.2",
     "playwright": "1.31.2",
     "pnpm": "7.28.0",
     "rimraf": "4.2.0",
     "rollup-plugin-delete": "^2.0.0",
-    "simple-git-hooks": "2.8.1",
     "tslib": "2.5.0",
     "typescript": "4.9.5",
     "vite": "4.1.4",
@@ -57,8 +57,10 @@
     "vitest": "0.29.2",
     "vue-tsc": "1.2.0"
   },
-  "simple-git-hooks": {
-    "pre-commit": ". $HOME/.nvm/nvm.sh & npx lint-staged"
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx lint-staged"
+    }
   },
   "lint-staged": {
     "*.{js,ts,tsx,vue,md,json,yml}": [
