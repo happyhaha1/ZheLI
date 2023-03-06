@@ -28,8 +28,8 @@ export class AppController {
     }
 
     @IpcHandle('get_courses')
-    public async get_courses(page: number): Promise<IpcResponse<Course[]>> {
-        return this.appService.get_courses(page)
+    public async get_courses(page: number, pagesize: number): Promise<IpcResponse<{ courses: Course[]; count: number }>> {
+        return this.appService.get_courses(page, pagesize)
     }
 
     @IpcHandle('change_show')

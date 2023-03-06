@@ -49,10 +49,12 @@ function handleSelect(selectData) {
     </el-table>
     <el-pagination
       v-model:current-page="coursesStore.meta.pageNo"
-      layout="prev, pager, next"
+      v-model:page-size="coursesStore.meta.pageSize"
+      layout="sizes, prev, pager, next, total"
       :total="coursesStore.meta.total"
-      :page-size="20"
+      :page-sizes="[10, 20, 30]"
       @current-change="loadData"
+      @size-change="loadData"
     />
     <div v-if="!coursesStore.$loading.get_courses" style="margin-top: 20px">
       <el-button>

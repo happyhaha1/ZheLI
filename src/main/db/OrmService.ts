@@ -14,7 +14,7 @@ export class OrmService {
     }
 
     constructor() {
-    // 创建数据库
+        // 创建数据库
         this.dataSource = new DataBase('zheli').dataSource
     }
 
@@ -26,18 +26,18 @@ export class OrmService {
         return res
     }
 
-    async findCourse(page: number) {
+    async findCourse(page: number, pagesize = 20) {
         await this.dataSource.initialize()
-        const skip = 20 * (page - 1)
-        const take = 20
+        const skip = pagesize * (page - 1)
+        const take = pagesize
 
-        const couseModels = await this.dataSource.getRepository(CourseModel)
+        const [couseModels, count] = await this.dataSource.getRepository(CourseModel)
             .createQueryBuilder('course')
             .skip(skip)
             .take(take)
-            .getMany()
+            .getManyAndCount()
 
         await this.dataSource.destroy()
-        return couseModels
+        return { couseModels, count }
     }
 }

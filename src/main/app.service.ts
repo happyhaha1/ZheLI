@@ -36,21 +36,21 @@ export class AppService {
         }
     }
 
-    public async get_courses(page: number): Promise<IpcResponse<Course[]>> {
+    public async get_courses(page: number, pagesize: number): Promise<IpcResponse<{ courses: Course[]; count: number }>> {
         try {
-            const couresModels = await this.orm.findCourse(page)
-            if (couresModels && couresModels.length > 0) {
-                const courses = couresModels.map(coures => coures.toCourse())
-                return { data: courses }
-            } else {
-                const courses = await this.stu.getCourses(page)
-                const courseModels = courses.map(course => convertCourseToCourseModel(course))
-                this.orm.saveList(courseModels)
-                return { data: courses }
-            }
+            const res = await this.orm.findCourse(page, pagesize)
+            const courses = res.couseModels.map(coures => coures.toCourse())
+            return { data: { courses, count: res.count } }
         } catch (error) {
             return { error }
         }
+    }
+
+    public async syncCoures() {
+        // const courses = await this.stu.getCourses()
+        // const courseModels = courses.map(course => convertCourseToCourseModel(course))
+        // this.orm.saveList(courseModels)
+        // return { data: courses }
     }
 
     public async change_show(show: boolean): Promise<IpcResponse<string>> {

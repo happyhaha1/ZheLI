@@ -18,8 +18,13 @@ export const useCoursesStore = defineStore('courses', {
     actions: {
         async get_courses() {
             // await new Promise(resolve => setTimeout(resolve, 1000))
-            const { data } = await ipcInstance.send<Course[]>('get_courses', this.meta.pageNo)
-            this.cousers = data
+            const { data } = await ipcInstance.send<{ courses: Course[]; count: number }>('get_courses', this.meta.pageNo, this.meta.pageSize)
+            this.$patch({
+                cousers: data.courses,
+                meta: {
+                    total: data.count,
+                },
+            })
         },
     },
 })
