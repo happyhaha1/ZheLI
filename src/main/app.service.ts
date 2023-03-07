@@ -1,5 +1,6 @@
 import { BrowserWindow } from 'electron'
 import { Injectable, Window } from 'einf'
+import AsyncLock from 'async-lock'
 import { ZheXue } from './Study'
 import { OrmService } from './db/OrmService'
 import { CourseModel } from './db/models/CourseModel'
@@ -9,7 +10,9 @@ export class AppService {
     private stu: ZheXue
     private orm: OrmService
     private run = false
-    private runPlay = false
+    private isCancel = false
+    private lock = new AsyncLock()
+    private readonly lockKey = 'stu_run'
     constructor(@Window() private win: BrowserWindow) {
         this.stu = new ZheXue(win)
         this.orm = OrmService.getInstance()
@@ -100,11 +103,16 @@ export class AppService {
 
     public async studyNoSync(course: Course, courses: Course[]) {
         try {
-            while (this.run) {
+            while (true) {
+                if (!this.run)
+                    break
                 await new Promise(resolve => setTimeout(resolve, 1000))
-                this.runPlay = true
-                const finish = await this.stu.play(course)
-                this.runPlay = false
+                let finish = false
+                await this.lock.acquire(this.lockKey, async () => {
+                    if (!this.run)
+                        return
+                    finish = await this.stu.play(course)
+                })
                 await this.orm.updateCourse(convertCourseToCourseModel(course, []))
                 if (finish && courses.length === 0) {
                     this.win.webContents.send('current_study_state', course, 100)
@@ -125,15 +133,29 @@ export class AppService {
             }
         } catch (error) {
             this.win.webContents.send('stduy_error', error)
+            await this.lock.acquire(this.lockKey, async () => {
+                await this.stu.close()
+            })
+            this.run = false
         } finally {
-            this.win.webContents.send('finish_success')
+            if (this.isCancel) {
+                this.win.webContents.send('finish_success')
+                this.isCancel = false
+            }
         }
     }
 
     public async cancel(): Promise<IpcResponse<string>> {
-        this.run = false
-        this.stu.close()
-        return { data: '开始停止' }
+        try {
+            await this.lock.acquire(this.lockKey, async () => {
+                this.run = false
+                this.isCancel = true
+                await this.stu.close()
+            })
+            return { data: '开始停止' }
+        } catch (error) {
+            return { error }
+        }
     }
 }
 

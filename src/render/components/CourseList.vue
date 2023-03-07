@@ -61,6 +61,10 @@ const messageOptions = {
             })
         } else if (action === 'cancel') {
             coursesStore.cancel()
+            ElMessage({
+                type: 'info',
+                message: '开始取消了',
+            })
         }
     },
 }

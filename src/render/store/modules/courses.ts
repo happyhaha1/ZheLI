@@ -51,8 +51,15 @@ export const useCoursesStore = defineStore('courses', {
                 })
             }
         },
-        cancel() {
+        async cancel() {
             ipcInstance.send('cancel')
+        },
+        async empty() {
+            this.$patch ({
+                currentVideo: null,
+                allProgress: 0,
+                isStudy: false,
+            })
         },
     },
 })

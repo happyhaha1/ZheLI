@@ -37,8 +37,18 @@ ipc.on('current_study_state', async (course: Course, percentage: number) => {
     coursesStore.receive(course, percentage)
 })
 ipc.on('finish_success', async () => {
-    coursesStore.isStudy = false
+    await coursesStore.empty()
+    ElMessage.success('取消成功')
     coursesStore.get_courses()
+})
+ipc.on('stduy_error', async (e) => {
+    await coursesStore.empty()
+    ElMessage({
+        showClose: true,
+        message: `报错啦${e.message}`,
+        type: 'error',
+        duration: 0,
+    })
 })
 async function logout() {
     try {
