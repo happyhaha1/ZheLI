@@ -52,4 +52,11 @@ export class OrmService {
         await this.dataSource.destroy()
         return courses
     }
+
+    async updateCourse(course: CourseModel) {
+        await this.dataSource.initialize()
+
+        await this.dataSource.getRepository(CourseModel).update({ url: course.url }, course)
+        await this.dataSource.destroy()
+    }
 }

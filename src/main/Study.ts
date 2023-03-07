@@ -20,7 +20,7 @@ export class ZheXue {
     private userFilePath: string = path.join(app.getPath('userData'), '/data/userInfo.json')
     private readonly url: string = 'https://www.zjce.gov.cn'
 
-    constructor(private win: BrowserWindow, private chromePath: string = '', private show = true) {
+    constructor(private win: BrowserWindow, private chromePath: string = '', private show = false) {
         if (!app.isPackaged) {
             this.cookieFilePath = path.join(app.getAppPath(), '../data/cookie.json')
             this.userFilePath = path.join(app.getAppPath(), '../data/userInfo.json')
@@ -36,7 +36,7 @@ export class ZheXue {
             const browserWindow = new BrowserWindow({
                 width: 1200,
                 height: 600,
-                show: this.show,
+                show: false,
             })
             this.homeWindow = browserWindow
             this.homePage = await pie.getPage(this.browser, browserWindow)
@@ -133,7 +133,7 @@ export class ZheXue {
             const browserWindow = new BrowserWindow({
                 width: 800,
                 height: 600,
-                show: this.show,
+                show: false,
             })
             this.searchWindow = browserWindow
             this.searchPage = await pie.getPage(this.browser, browserWindow)
@@ -263,9 +263,14 @@ export class ZheXue {
 
         const currentVideo = course.videos.find(video => video.name === currentVideoName)
 
-        const progress = await this.videoPage.$eval('.ant-progress-text', el => el.textContent)
-        course.progress = parseFloat(progress)
-
+        const setProgressValues = await this.videoPage.$$eval('.set-content .right .set-progress', elements => elements.map(e => e.textContent))
+        const totalProgress = setProgressValues.reduce((acc, text) => {
+            const progressMatch = text.match(/\d+/) // 从文本中提取进度数字部分
+            const progress = progressMatch ? parseInt(progressMatch[0]) : 0
+            return acc + progress
+        }, 0)
+        // const progress = await this.videoPage.$eval('.ant-progress-text', el => el.textContent)
+        course.progress = totalProgress / course.videos.length
         const ntime = await this.videoPage.$eval('.dplayer-ptime', el => el.textContent)
         const dtime = await this.videoPage.$eval('.dplayer-dtime', el => el.textContent)
         const ntimelong = StrToSeconds(ntime)
@@ -281,26 +286,29 @@ export class ZheXue {
         course.videos[currentVideo.index].dtime = dtimelong
         course.videos[currentVideo.index].ntime = ntimelong
         course.videos[currentVideo.index].progress = videoProgress
-        
-        course.currentVideo = currentVideo
-        // if (videoProgress === 100) {
-        //     //播放下一集
-        // }
 
-        if (course.progress === 100) {
+        course.currentVideo = currentVideo
+
+        if (course.progress === 100)
             return true
-        } else {
-            const vedioStatus = await this.videoPage.$('.dplayer-playing')
-            if (!vedioStatus) {
-                // 点击播放按钮
-                await new Promise(resolve => setTimeout(resolve, 5000))
-                ;(await this.videoPage.$('.dplayer-play-icon')).click()
-                const vedioStatus2 = this.videoPage.$('.dplayer-playing')
-                if (!vedioStatus2)
-                    throw new Error('无法播放')
-            }
-            return false
+
+        if (videoProgress === 100) {
+            const allVideoContent = await this.videoPage.$$('.set-content')
+
+            const index = currentVideo.index++
+            allVideoContent[index].click()
         }
+
+        const vedioStatus = await this.videoPage.$('.dplayer-playing')
+        if (!vedioStatus) {
+            // 点击播放按钮
+            await new Promise(resolve => setTimeout(resolve, 5000))
+            ;(await this.videoPage.$('.dplayer-play-icon')).click()
+            const vedioStatus2 = this.videoPage.$('.dplayer-playing')
+            if (!vedioStatus2)
+                throw new Error('无法播放')
+        }
+        return false
     }
 
     async logout() {
