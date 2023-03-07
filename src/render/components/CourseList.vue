@@ -60,7 +60,7 @@ const messageOptions = {
                 message: '你点击了隐藏按钮,你可以通过下方按钮点击查看进度',
             })
         } else if (action === 'cancel') {
-            coursesStore.get_courses()
+            coursesStore.cancel()
         }
     },
 }

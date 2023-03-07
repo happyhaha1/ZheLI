@@ -8,6 +8,8 @@ import { CourseModel } from './db/models/CourseModel'
 export class AppService {
     private stu: ZheXue
     private orm: OrmService
+    private run = false
+    private runPlay = false
     constructor(@Window() private win: BrowserWindow) {
         this.stu = new ZheXue(win)
         this.orm = OrmService.getInstance()
@@ -88,6 +90,7 @@ export class AppService {
     public async study(courses: Course[]): Promise<IpcResponse<string>> {
         try {
             const course = courses[0]
+            this.run = true
             this.studyNoSync(course, courses)
             return { data: '启动成功' }
         } catch (error) {
@@ -96,27 +99,41 @@ export class AppService {
     }
 
     public async studyNoSync(course: Course, courses: Course[]) {
-        while (true) {
-            await new Promise(resolve => setTimeout(resolve, 1000))
-            const finish = await this.stu.play(course)
-            await this.orm.updateCourse(convertCourseToCourseModel(course, []))
-            if (finish && courses.length === 0) {
-                this.win.webContents.send('current_study_state', course, 100)
-                break
-            } else if (finish && courses.length > 0) {
-                const nextCourse = courses[0]
-                await this.studyNoSync(nextCourse, courses)
-            } else {
-                const totalProgress = courses.reduce((total, course) => {
-                    if (course.progress !== undefined)
-                        return total + course.progress
-                    else
-                        return total
-                }, 0)
-                const percentage = Math.floor(totalProgress / (courses.length))
-                this.win.webContents.send('current_study_state', course, percentage)
+        try {
+            while (this.run) {
+                await new Promise(resolve => setTimeout(resolve, 1000))
+                this.runPlay = true
+                const finish = await this.stu.play(course)
+                this.runPlay = false
+                await this.orm.updateCourse(convertCourseToCourseModel(course, []))
+                if (finish && courses.length === 0) {
+                    this.win.webContents.send('current_study_state', course, 100)
+                    break
+                } else if (finish && courses.length > 0) {
+                    const nextCourse = courses[0]
+                    await this.studyNoSync(nextCourse, courses)
+                } else {
+                    const totalProgress = courses.reduce((total, course) => {
+                        if (course.progress !== undefined)
+                            return total + course.progress
+                        else
+                            return total
+                    }, 0)
+                    const percentage = Math.floor(totalProgress / (courses.length))
+                    this.win.webContents.send('current_study_state', course, percentage)
+                }
             }
+        } catch (error) {
+            this.win.webContents.send('stduy_error', error)
+        } finally {
+            this.win.webContents.send('finish_success')
         }
+    }
+
+    public async cancel(): Promise<IpcResponse<string>> {
+        this.run = false
+        this.stu.close()
+        return { data: '开始停止' }
     }
 }
 

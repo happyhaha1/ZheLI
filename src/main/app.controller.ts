@@ -48,6 +48,11 @@ export class AppController {
         return this.appService.study(courses)
     }
 
+    @IpcHandle('cancel')
+    public async cancel(): Promise<IpcResponse<string>> {
+        return this.appService.cancel()
+    }
+
     @IpcHandle('logout')
     public async logout(): Promise<IpcResponse<string>> {
         return this.appService.logout()

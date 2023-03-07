@@ -36,6 +36,10 @@ ipc.on('current_study_state', async (course: Course, percentage: number) => {
     // await loadData()
     coursesStore.receive(course, percentage)
 })
+ipc.on('finish_success', async () => {
+    coursesStore.isStudy = false
+    coursesStore.get_courses()
+})
 async function logout() {
     try {
         await userStore.logout()

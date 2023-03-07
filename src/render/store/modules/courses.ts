@@ -51,5 +51,8 @@ export const useCoursesStore = defineStore('courses', {
                 })
             }
         },
+        cancel() {
+            ipcInstance.send('cancel')
+        },
     },
 })
