@@ -5,3 +5,4 @@ out
 !.prettierrc.js
 !.stylelintrc.js
 !.eslintrc.js
+.DS_Store
