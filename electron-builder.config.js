@@ -13,6 +13,22 @@ const config = {
         'dist/preload/**/*',
         'dist/render/**/*',
     ],
+    win: {
+        target: [{
+            target: 'nsis',
+            arch: [
+                'x64',
+                'ia32',
+            ],
+        }],
+    },
+    nsis: {
+        shortcutName: 'zhe_li_xue_xi',
+        oneClick: false,
+        allowElevation: true,
+        allowToChangeInstallationDirectory: true,
+        perMachine: true,
+    },
 }
 
 module.exports = config

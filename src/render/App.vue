@@ -4,11 +4,19 @@ import UserInfo from './components/UserInfo.vue'
 
 <template>
   <el-container>
-    <el-header>浙里学习</el-header>
+    <el-header>
+      浙里学习
+      <p>
+        Powered by Happyhaha
+      </p>
+    </el-header>
     <el-main>
       <UserInfo />
     </el-main>
   </el-container>
+  <el-footer>
+    Copyright © 2021 浙里学习  Powered by Happyhaha
+  </el-footer>
 </template>
 
 <style>

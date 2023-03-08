@@ -3,7 +3,6 @@ import { join } from 'path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePluginDoubleshot } from 'vite-plugin-doubleshot'
-import deletePlugin from 'rollup-plugin-delete'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -18,7 +17,11 @@ export default defineConfig({
             external: ['electron'],
             electron: {
                 build: {
+                    disabled: true,
                     config: './electron-builder.config.js',
+                    cliOptions: {
+                        win: ['--windows'],
+                    },
                 },
                 preload: {
                     entry: 'src/preload/index.ts',
@@ -38,13 +41,6 @@ export default defineConfig({
     build: {
         outDir: join(__dirname, 'dist/render'),
         emptyOutDir: true,
-        rollupOptions: {
-            plugins: [
-                deletePlugin({
-                    targets: ['dist/**', '!dist/data'],
-                }),
-            ],
-        },
     },
     test: { // e2e tests
         include: ['./tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],

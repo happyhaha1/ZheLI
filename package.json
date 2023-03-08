@@ -1,5 +1,5 @@
 {
-  "name": "ZheLi",
+  "name": "zhe_li",
   "version": "0.0.1",
   "packageManager": "yarn@3.4.1",
   "description": "Vite + Electron with esbuild, so fast! ⚡",
@@ -7,7 +7,8 @@
   "scripts": {
     "vite": "vite",
     "dev": "node ./src/common/devtools.js",
-    "build": "rimraf dist/!(data) && vite build",
+    "build": "rimraf dist && vite build && electron-builder -c electron-builder.config.js",
+    "build-win": "rimraf dist && vite build && electron-builder --win -c electron-builder.config.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "npm run test:main && npm run test:render",
