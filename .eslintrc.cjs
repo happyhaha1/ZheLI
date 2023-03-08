@@ -14,7 +14,8 @@ module.exports = {
         'plugin:vue/vue3-recommended',
         'eslint:recommended',
         '@vue/eslint-config-typescript/recommended',
-        '@vue/eslint-config-prettier'
+        '@vue/eslint-config-prettier',
+        'plugin:json/recommended'
     ],
     rules: {
         '@typescript-eslint/ban-ts-comment': ['error', { 'ts-ignore': 'allow-with-description' }],

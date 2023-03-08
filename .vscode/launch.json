@@ -7,7 +7,11 @@
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron-vite",
+      "runtimeVersion": "18.14.2",
       "windows": {
+        "name": "win_electron_debug",
+        "type": "node",
+        "request": "launch",
         "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron-vite.cmd"
       },
       "runtimeArgs": ["--sourcemap"]

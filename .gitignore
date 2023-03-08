@@ -2,3 +2,6 @@ node_modules
 dist
 out
 *.log*
+!.prettierrc.js
+!.stylelintrc.js
+!.eslintrc.js
