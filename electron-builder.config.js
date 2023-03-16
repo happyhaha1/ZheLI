@@ -13,6 +13,9 @@ const config = {
         'dist/preload/**/*',
         'dist/render/**/*',
     ],
+    mac: {
+        icon: 'src/common/icon.png',
+    },
     win: {
         target: [{
             target: 'nsis',
@@ -21,6 +24,7 @@ const config = {
                 'ia32',
             ],
         }],
+        icon: 'src/common/icon.png',
     },
     nsis: {
         shortcutName: 'zhe_li_xue_xi',
