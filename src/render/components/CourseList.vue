@@ -85,13 +85,13 @@ function showMessage() {
 </script>
 
 <template>
-  <div v-if="coursesStore.isSync">
-    <ElProgress
-      :percentage="coursesStore.syncProgress" :color="colors" :text-inside="true"
-      :stroke-width="24"
-    />
-  </div>
   <div v-if="isLoggedIn">
+    <div v-if="coursesStore.isSync">
+      <ElProgress
+        :percentage="coursesStore.syncProgress" :color="colors" :text-inside="true"
+        :stroke-width="24"
+      />
+    </div>
     <el-table
       v-loading="coursesStore.$loading.get_courses" :data="coursesStore.cousers" style="width: 100%" height="250"
       @selection-change="handleSelect"

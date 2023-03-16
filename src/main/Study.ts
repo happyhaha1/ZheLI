@@ -227,22 +227,6 @@ export class ZheXue {
             await this.videoPage.waitForNetworkIdle()
             course.videos = []
             if (course.videoNum > 1) {
-                // 需要获取视频的链接
-                // await this.videoPage.$$eval('.set-content', (els) => {
-                //     els.forEach((el, index) => {
-                //         const name = el.querySelector('.right .set-title').textContent
-                //         const progressStr = el.querySelector('.right .set-progress').textContent
-                //         const match = progressStr.match(/\d+/)
-                //         const progress = match ? parseInt(match[0], 10) : 0
-                //         console.log(name)
-                //         course.videos.push({
-                //             index,
-                //             name,
-                //             progress,
-                //         })
-                //     })
-                // })
-
                 const titles = await this.videoPage.$$eval('.set-content .right .set-title', els => els.map(el => el.textContent))
                 for (let t = 0; t < titles.length; t++) {
                     course.videos.push({
@@ -262,48 +246,65 @@ export class ZheXue {
 
             course.frist = false
         }
-        const currentVideoName = await this.videoPage.$eval(
-            '.set-content.active .right .set-title',
-            el => el.textContent,
-        )
+        if (course.videoNum > 1) {
+            const currentVideoName = await this.videoPage.$eval(
+                '.set-content.active .right .set-title',
+                el => el.textContent,
+            )
 
-        const currentVideo = course.videos.find(video => video.name === currentVideoName)
+            const currentVideo = course.videos.find(video => video.name === currentVideoName)
 
-        const setProgressValues = await this.videoPage.$$eval('.set-content .right .set-progress', elements => elements.map(e => e.textContent))
-        const totalProgress = setProgressValues.reduce((acc, text) => {
-            const progressMatch = text.match(/\d+/) // 从文本中提取进度数字部分
-            const progress = progressMatch ? parseInt(progressMatch[0]) : 0
-            return acc + progress
-        }, 0)
-        // const progress = await this.videoPage.$eval('.ant-progress-text', el => el.textContent)
-        course.progress = totalProgress / course.videos.length
-        const ntime = await this.videoPage.$eval('.dplayer-ptime', el => el.textContent)
-        const dtime = await this.videoPage.$eval('.dplayer-dtime', el => el.textContent)
-        const ntimelong = StrToSeconds(ntime)
-        const dtimelong = StrToSeconds(dtime)
+            const setProgressValues = await this.videoPage.$$eval('.set-content .right .set-progress', elements => elements.map(e => e.textContent))
+            const totalProgress = setProgressValues.reduce((acc, text) => {
+                const progressMatch = text.match(/\d+/) // 从文本中提取进度数字部分
+                const progress = progressMatch ? parseInt(progressMatch[0]) : 0
+                return acc + progress
+            }, 0)
+            // const progress = await this.videoPage.$eval('.ant-progress-text', el => el.textContent)
+            course.progress = totalProgress / course.videos.length
+            const ntime = await this.videoPage.$eval('.dplayer-ptime', el => el.textContent)
+            const dtime = await this.videoPage.$eval('.dplayer-dtime', el => el.textContent)
+            const ntimelong = StrToSeconds(ntime)
+            const dtimelong = StrToSeconds(dtime)
 
-        const progressStr = await this.videoPage.$eval(
-            '.set-content.active .right .set-progress',
-            el => el.textContent,
-        )
-        const match = progressStr.match(/\d+/)
-        const videoProgress = match ? parseInt(match[0], 10) : 0
+            const progressStr = await this.videoPage.$eval(
+                '.set-content.active .right .set-progress',
+                el => el.textContent,
+            )
+            const match = progressStr.match(/\d+/)
+            const videoProgress = match ? parseInt(match[0], 10) : 0
 
-        course.videos[currentVideo.index].dtime = dtimelong
-        course.videos[currentVideo.index].ntime = ntimelong
-        course.videos[currentVideo.index].progress = videoProgress
+            course.videos[currentVideo.index].dtime = dtimelong
+            course.videos[currentVideo.index].ntime = ntimelong
+            course.videos[currentVideo.index].progress = videoProgress
 
-        course.currentVideo = currentVideo
+            course.currentVideo = currentVideo
+            if (videoProgress === 100) {
+                const allVideoContent = await this.videoPage.$$('.set-content')
+
+                const index = currentVideo.index++
+                allVideoContent[index].click()
+            }
+        } else {
+            const ntime = await this.videoPage.$eval('.dplayer-ptime', el => el.textContent)
+            const dtime = await this.videoPage.$eval('.dplayer-dtime', el => el.textContent)
+            const ntimelong = StrToSeconds(ntime)
+            const dtimelong = StrToSeconds(dtime)
+            course.videos[0].dtime = dtimelong
+            course.videos[0].ntime = ntimelong
+            const progressStr = await this.videoPage.$eval(
+                '.ant-progress-text',
+                el => el.textContent,
+            )
+            const match = progressStr.match(/\d+/)
+            const videoProgress = match ? parseInt(match[0], 10) : 0
+            course.videos[0].progress = videoProgress
+            course.currentVideo = course.videos[0]
+            course.progress = videoProgress
+        }
 
         if (course.progress === 100)
             return true
-
-        if (videoProgress === 100) {
-            const allVideoContent = await this.videoPage.$$('.set-content')
-
-            const index = currentVideo.index++
-            allVideoContent[index].click()
-        }
 
         const vedioStatus = await this.videoPage.$('.dplayer-playing')
         if (!vedioStatus) {
