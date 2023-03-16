@@ -21,7 +21,7 @@ export class DataBase {
         } else {
             basePath = path.join(
                 app.getAppPath(),
-                `../data/${database}.db`,
+                `../../data/${database}.db`,
             )
         }
         const options: BetterSqlite3ConnectionOptions = {

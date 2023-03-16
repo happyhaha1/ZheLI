@@ -16,14 +16,20 @@ export class ZheXue {
     private searchWindow?: BrowserWindow
     private searchPage?: Page
 
-    private cookieFilePath: string = path.join(app.getPath('userData'), '/data/cookie.json')
-    private userFilePath: string = path.join(app.getPath('userData'), '/data/userInfo.json')
+    private readonly dataPath: string = path.join(app.getPath('userData'), '/data')
+
+    private cookieFilePath: string = path.join(this.dataPath, '/cookie.json')
+    private userFilePath: string = path.join(this.dataPath, '/userInfo.json')
     private readonly url: string = 'https://www.zjce.gov.cn'
 
     constructor(private win: BrowserWindow, private chromePath: string = '', private show = false) {
         if (!app.isPackaged) {
-            this.cookieFilePath = path.join(app.getAppPath(), '../data/cookie.json')
-            this.userFilePath = path.join(app.getAppPath(), '../data/userInfo.json')
+            this.cookieFilePath = path.join(app.getAppPath(), '../../data/cookie.json')
+            this.userFilePath = path.join(app.getAppPath(), '../../data/userInfo.json')
+        }
+        if (!fs.existsSync(this.dataPath)) {
+            // 创建文件夹
+            fs.mkdirSync(this.dataPath)
         }
     }
 
