@@ -4,7 +4,6 @@ import { BrowserWindow, app } from 'electron'
 import pie from 'puppeteer-in-electron'
 import { Duration } from 'luxon'
 import { Browser, Page } from 'puppeteer-core'
-
 export class ZheXue {
     private browser?: Browser
     private loginWindow?: BrowserWindow
@@ -71,6 +70,7 @@ export class ZheXue {
                 width: 800,
                 height: 600,
                 show: true,
+                autoHideMenuBar: false,
             })
             this.loginWindow = browserWindow
             this.loginPage = await pie.getPage(this.browser, browserWindow)
@@ -146,20 +146,6 @@ export class ZheXue {
         return { name, company, avatarUrl, integral }
     }
 
-    async searchByName(name: string) {
-        await this.ensureBrowserInitialized()
-        if (!this.searchWindow) {
-            const browserWindow = new BrowserWindow({
-                width: 800,
-                height: 600,
-                show: false,
-            })
-            this.searchWindow = browserWindow
-            this.searchPage = await pie.getPage(this.browser, browserWindow)
-        }
-        await this.searchPage.goto(`${this.url}/search?keyword=${encodeURI(name)}`)
-    }
-
     async getCourses(page: number): Promise<Course[]> {
         await this.ensureBrowserInitialized()
 
@@ -230,10 +216,15 @@ export class ZheXue {
                 width: 800,
                 height: 600,
                 show: this.show,
+                autoHideMenuBar: false,
             })
             this.videoWindow = browserWindow
             this.videoWindow.webContents.setAudioMuted(true)
             this.videoPage = await pie.getPage(this.browser, browserWindow)
+            this.videoWindow.addListener('closed', () => {
+                this.videoWindow = undefined
+                this.videoPage = undefined
+            })
         }
         if (course.frist) {
             await this.videoPage.goto(this.url + course.url)

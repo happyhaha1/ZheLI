@@ -3,11 +3,13 @@
  * @see https://www.electron.build/configuration/configuration
  */
 const config = {
+    appId: 'cn.kxlove.zheli',
+    productName: '浙里学习',
     directories: {
         output: 'dist/electron',
     },
     publish: null,
-    npmRebuild: false,
+    npmRebuild: true,
     files: [
         'dist/main/**/*',
         'dist/preload/**/*',
@@ -20,17 +22,18 @@ const config = {
         target: [{
             target: 'nsis',
             arch: [
-                'x64',
+                // 'x64',
                 'ia32',
             ],
         }],
         icon: 'src/common/icon.png',
     },
     nsis: {
-        shortcutName: 'zhe_li_xue_xi',
+        shortcutName: '浙里学习',
         oneClick: false,
         allowElevation: true,
         allowToChangeInstallationDirectory: true,
+        deleteAppDataOnUninstall: true,
         perMachine: true,
     },
 }

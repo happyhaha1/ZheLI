@@ -157,6 +157,15 @@ export class AppService {
             return { error }
         }
     }
+
+    public async close(): Promise<IpcResponse<string>> {
+        try {
+            await this.stu.close()
+            return { data: '成功' }
+        } catch (error) {
+            return { error }
+        }
+    }
 }
 
 function convertCourseToCourseModel(course: Course, models: CourseModel[]): CourseModel {

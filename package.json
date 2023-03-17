@@ -17,7 +17,6 @@
     "test:e2e": "vitest run",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "rebuild": "electron-rebuild -f -w better-sqlite3 puppeteer-core",
     "vue-devtools": "./node_modules/.bin/vue-devtools"
   },
   "dependencies": {
@@ -44,7 +43,6 @@
     "@vue/test-utils": "2.3.0",
     "electron": "22.0.0",
     "electron-builder": "23.6.0",
-    "electron-rebuild": "^3.2.9",
     "eslint": "8.35.0",
     "happy-dom": "8.9.0",
     "husky": "^8.0.3",

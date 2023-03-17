@@ -34,7 +34,14 @@ export async function createWindow() {
         win.removeMenu()
 
     win.on('closed', () => {
-        win.destroy()
+        const windows = BrowserWindow.getAllWindows()
+        // 遍历窗口列表并关闭所有窗口
+        windows.forEach((window) => {
+            window.close()
+        })
+    })
+    app.on('window-all-closed', () => {
+        app.quit()
     })
 
     return win

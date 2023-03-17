@@ -57,4 +57,8 @@ export class AppController {
     public async logout(): Promise<IpcResponse<string>> {
         return this.appService.logout()
     }
+
+    public async close() {
+        return this.appService.cancel()
+    }
 }
