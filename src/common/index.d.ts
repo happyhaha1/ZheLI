@@ -13,6 +13,7 @@ declare global {
     name: string
     company: string
     avatarUrl: string
+    integral: number
   }
   
   interface Course {

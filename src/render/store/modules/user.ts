@@ -7,6 +7,7 @@ export const useUserStore = defineStore('user', {
             name: null,
             company: null,
             avatarUrl: null,
+            integral: null,
         }
     },
     getters: {

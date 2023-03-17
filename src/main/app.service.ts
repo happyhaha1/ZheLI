@@ -27,15 +27,15 @@ export class AppService {
         }
     }
 
-    public async get_user_info(isSync: boolean): Promise<IpcResponse<User>> {
+    public async get_user_info(): Promise<IpcResponse<User>> {
         try {
-            if (isSync) {
-                const userInfo = await this.stu.getUserInfoByBrowser()
-                return { data: userInfo }
-            } else {
-                const userInfo = await this.stu.getUserInfoByFile()
-                return { data: userInfo }
-            }
+            // if (isSync) {
+            const userInfo = await this.stu.getUserInfoByBrowser()
+            return { data: userInfo }
+            // } else {
+            //     const userInfo = await this.stu.getUserInfoByFile()
+            //     return { data: userInfo }
+            // }
         } catch (error) {
             return { error }
         }

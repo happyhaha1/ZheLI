@@ -128,9 +128,22 @@ export class ZheXue {
         const avatarUrl = await this.homePage.$eval('.for-avatar img', el =>
             el.getAttribute('src'),
         )
+
+        const msgText = await this.homePage.$eval('.progress_text .msg_style', el =>
+            el.textContent,
+        )
+
+        const integralStr = await this.homePage.$eval('.progress_text .num_style', el =>
+            el.textContent,
+        )
+
+        const integral = parseFloat(integralStr.split('/')[0])
+        if (msgText.includes('本年考核已达标') && integral === 0)
+            throw new LoginFailedError('登录失效')
+
         const user = { name, company, avatarUrl }
         await fs.promises.writeFile(this.userFilePath, JSON.stringify(user))
-        return { name, company, avatarUrl }
+        return { name, company, avatarUrl, integral }
     }
 
     async searchByName(name: string) {

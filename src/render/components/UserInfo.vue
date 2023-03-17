@@ -14,6 +14,8 @@ async function loadData() {
         await userStore.info()
     } catch (error) {
         ElMessage.error(error.message)
+        if (error instanceof LoginFailedError)
+            await userStore.logout()
     }
 }
 
@@ -96,6 +98,9 @@ async function syncCourse() {
       <div class="name">
         {{ userStore.company }}
         {{ userStore.name }}
+      </div>
+      <div>
+        已获学时合计:{{ userStore.integral }}
       </div>
       <div class="company">
         <el-button class="btn" :disabled="coursesStore.isSync" @click="syncUserInfo">
