@@ -115,15 +115,16 @@ export class AppService {
                 })
                 await this.orm.updateCourse(convertCourseToCourseModel(course, []))
 
-                if (finish)
+                if (finish) {
                     courses = courses.filter(c => c.url !== course.url)
-
-                if (finish && courses.length === 0) {
-                    this.win.webContents.send('current_study_state', course, 100)
+                    if (courses.length === 0) {
+                        this.win.webContents.send('current_study_state', course, 100)
+                        this.run = false
+                    } else {
+                        const nextCourse = courses[0]
+                        await this.studyNoSync(nextCourse, courses)
+                    }
                     break
-                } else if (finish && courses.length > 0) {
-                    const nextCourse = courses[0]
-                    await this.studyNoSync(nextCourse, courses)
                 } else {
                     const totalProgress = courses.reduce((total, course) => {
                         if (course.progress !== undefined)
@@ -152,9 +153,11 @@ export class AppService {
     public async cancel(): Promise<IpcResponse<string>> {
         try {
             await this.lock.acquire(this.lockKey, async () => {
-                this.run = false
-                this.isCancel = true
-                await this.stu.close()
+                if (this.run) {
+                    this.run = false
+                    this.isCancel = true
+                    await this.stu.close()
+                }
             })
             return { data: '开始停止' }
         } catch (error) {

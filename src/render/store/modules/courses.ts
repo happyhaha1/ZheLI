@@ -45,7 +45,6 @@ export const useCoursesStore = defineStore('courses', {
                 this.isStudy = false
                 this.get_courses()
             } else {
-                this.get_courses()
                 this.$patch({
                     currentVideo: course.currentVideo,
                     allProgress: percentage,

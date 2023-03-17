@@ -17,6 +17,7 @@ export async function createWindow() {
             devTools: isDev,
         },
         autoHideMenuBar: !isDev,
+        titleBarStyle: 'hiddenInset',
     })
 
     // win.maximize()

@@ -371,8 +371,17 @@ export class ZheXue {
     }
 
     async chageShow(show: boolean) {
-        await this.close()
-        this.show = show
+        if (show) {
+            if (this.videoWindow)
+                this.videoWindow.show()
+            if (this.homeWindow)
+                this.homeWindow.show()
+        } else {
+            if (this.videoWindow)
+                this.videoWindow.hide()
+            if (this.homeWindow)
+                this.homeWindow.hide()
+        }
     }
 
     async autoScroll(page: any) {

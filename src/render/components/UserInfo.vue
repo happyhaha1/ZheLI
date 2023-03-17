@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useIpc } from '@render/plugins/ipc'
 import { useAppStore, useCoursesStore, useUserStore } from '@render/store'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { onMounted } from 'vue'
 import CourseList from './CourseList.vue'
 const ipc = useIpc()
@@ -37,6 +37,15 @@ ipc.on('sync_current', async (count: number, allPage: number) => {
 ipc.on('current_study_state', async (course: Course, percentage: number) => {
     // await loadData()
     coursesStore.receive(course, percentage)
+    if (percentage === 100) {
+        ElMessageBox.close()
+        ElMessage({
+            showClose: true,
+            message: '你选择的课程学习完成了',
+            type: 'success',
+            duration: 0,
+        })
+    }
 })
 ipc.on('finish_success', async () => {
     await coursesStore.empty()
