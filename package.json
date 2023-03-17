@@ -21,7 +21,9 @@
     },
     "dependencies": {
         "@electron-toolkit/preload": "^1.0.2",
-        "@electron-toolkit/utils": "^1.0.2"
+        "@electron-toolkit/utils": "^1.0.2",
+        "coordtransform": "^2.1.2",
+        "mars2d": "^3.1.11"
     },
     "devDependencies": {
         "@electron-toolkit/tsconfig": "^1.0.1",

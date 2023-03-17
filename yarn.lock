@@ -1455,6 +1455,11 @@ cookie@~0.4.1:
   resolved "https://registry.npmmirror.com/cookie/-/cookie-0.4.2.tgz#0e41f24de5ecf317947c82fc789e06a884824432"
   integrity sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==
 
+coordtransform@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.npmmirror.com/coordtransform/-/coordtransform-2.1.2.tgz#090349cd62b1dc05fae47b291bf9f0b7ce827f66"
+  integrity sha512-0xLJApBlrUP+clyLJWIaqg4GXE5JTbAJb5d/CDMqebIksAMMze8eAyO6YfHEIxWJ+c42mXoMHBzWTeUrG7RFhw==
+
 copy-anything@^2.0.1:
   version "2.0.6"
   resolved "https://registry.npmmirror.com/copy-anything/-/copy-anything-2.0.6.tgz#092454ea9584a7b7ad5573062b2a87f5900fc480"
@@ -2868,6 +2873,11 @@ lazy-val@^1.0.4, lazy-val@^1.0.5:
   resolved "https://registry.npmmirror.com/lazy-val/-/lazy-val-1.0.5.tgz#6cf3b9f5bc31cee7ee3e369c0832b7583dcd923d"
   integrity sha512-0/BnGCCfyUMkBpeDgWihanIAF9JmZhHBgUhEqzvf+adhNGLoP6TaiI5oF8oyb3I45P+PcnrqihSf01M0l0G5+Q==
 
+leaflet@~1.9.3:
+  version "1.9.3"
+  resolved "https://registry.npmmirror.com/leaflet/-/leaflet-1.9.3.tgz#52ec436954964e2d3d39e0d433da4b2500d74414"
+  integrity sha512-iB2cR9vAkDOu5l3HAay2obcUHZ7xwUBBjph8+PGtmW/2lYhbLizWtG7nTeYht36WfOslixQF9D/uSIzhZgGMfQ==
+
 less@^4.1.3:
   version "4.1.3"
   resolved "https://registry.npmmirror.com/less/-/less-4.1.3.tgz#175be9ddcbf9b250173e0a00b4d6920a5b770246"
@@ -3010,6 +3020,13 @@ make-dir@^2.1.0:
   dependencies:
     pify "^4.0.1"
     semver "^5.6.0"
+
+mars2d@^3.1.11:
+  version "3.1.11"
+  resolved "https://registry.npmmirror.com/mars2d/-/mars2d-3.1.11.tgz#6d4e791dda4cc5cc10a8b755ff4db5a47901be48"
+  integrity sha512-W/D3jjVlGLYCL1psPLoYIHhmyq2YMq3tz6sdm6Lt7YySF4go6zUsFvn0qeShxY3xE9/z2rStUXJYQonJzBYobw==
+  dependencies:
+    leaflet "~1.9.3"
 
 matcher@^3.0.0:
   version "3.0.0"

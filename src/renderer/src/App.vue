@@ -1,107 +1,86 @@
 <script setup lang="ts">
-import Versions from './components/Versions.vue'
+import * as mars2d from 'mars2d'
+import { onMounted, onUnmounted } from 'vue'
+import coordtransform from 'coordtransform'
+
+let map
+let graphicLayer
+function initMap(): mars2d.Map {
+    // 创建三维地球场景
+    const map = new mars2d.Map('mars2dContainer', {
+        zoom: 13,
+        center: { lng: 120.504661, lat: 27.85194 },
+        minZoom: 3,
+        maxZoom: 18,
+        ChinaCRS: 'WGS84',
+        control: {
+            scale: true,
+            locationBar: {
+                crs: 'CGCS2000_GK_Zone_3',
+                template:
+                    '<div>经度:{lng}</div> <div>纬度:{lat}</div> <div>横{crsx}  纵{crsy}</div> <div>层级:{level}</div>'
+            },
+            zoom: { position: 'bottomright' },
+            toolBar: { position: 'bottomright' },
+            layers: { position: 'topleft' }
+        },
+        basemaps: [
+            {
+                name: '天地图电子',
+                type: 'group',
+                layers: [
+                    { name: '底图', type: 'tdt', layer: 'vec_d' },
+                    { name: '注记', type: 'tdt', layer: 'vec_z' }
+                ],
+                show: true
+            },
+            { name: '天地图卫星', type: 'tdt', layer: 'img' },
+            {
+                name: 'OSM地图',
+                type: 'xyz',
+                url: 'http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
+            },
+            { name: '高德地图', type: 'gaode', layer: 'vec' },
+            { name: '百度地图', type: 'baidu', layer: 'vec' }
+        ],
+        operationallayers: [{ name: '经纬网', type: 'graticule' }]
+    })
+
+    // 创建矢量数据图层
+    graphicLayer = new mars2d.layer.GraphicLayer()
+    map.addLayer(graphicLayer)
+    // 加一些演示数据
+    addDemoGraphic1()
+    return map
+}
+function addDemoGraphic1(): void {
+    const gcj02 = coordtransform.bd09togcj02(27.83506, 120.54997)
+    const wgs = coordtransform.gcj02towgs84(gcj02[0], gcj02[1])
+    console.log(wgs)
+    const graphic = new mars2d.graphic.Marker({
+        latlng: [27.832751142073597, 120.53940562314315],
+        style: {
+            image: 'img/marker/mark1.png',
+            width: 32,
+            height: 44,
+            horizontalOrigin: mars2d.HorizontalOrigin.CENTER,
+            verticalOrigin: mars2d.VerticalOrigin.BOTTOM
+        },
+        attr: { remark: '示例1' }
+    })
+    graphicLayer.addGraphic(graphic)
+}
+
+onMounted(() => {
+    map = initMap()
+})
+onUnmounted(() => {
+    map = null
+})
 </script>
 
 <template>
-    <Versions></Versions>
-
-    <svg class="hero-logo" viewBox="0 0 900 300">
-        <use xlink:href="./assets/icons.svg#electron" />
-    </svg>
-    <h2 class="hero-text">
-        You've successfully created an Electron project with Vue and TypeScript
-    </h2>
-    <p class="hero-tagline">Please try pressing <code>F12</code> to open the devTool</p>
-
-    <div class="links">
-        <div class="link-item">
-            <a target="_blank" href="https://evite.netlify.app">Documentation</a>
-        </div>
-        <div class="link-item link-dot">•</div>
-        <div class="link-item">
-            <a target="_blank" href="https://github.com/alex8088/electron-vite">Getting Help</a>
-        </div>
-        <div class="link-item link-dot">•</div>
-        <div class="link-item">
-            <a
-                target="_blank"
-                href="https://github.com/alex8088/quick-start/tree/master/packages/create-electron"
-            >
-                create-electron
-            </a>
-        </div>
-    </div>
-
-    <div class="features">
-        <div class="feature-item">
-            <article>
-                <h2 class="title">Configuring</h2>
-                <p class="detail">
-                    Config with <span>electron.vite.config.ts</span> and refer to the
-                    <a target="_blank" href="https://evite.netlify.app/config/">config guide</a>.
-                </p>
-            </article>
-        </div>
-        <div class="feature-item">
-            <article>
-                <h2 class="title">HMR</h2>
-                <p class="detail">
-                    Edit <span>src/renderer</span> files to test HMR. See
-                    <a target="_blank" href="https://evite.netlify.app/guide/hmr-in-renderer.html"
-                        >docs</a
-                    >.
-                </p>
-            </article>
-        </div>
-        <div class="feature-item">
-            <article>
-                <h2 class="title">Hot Reloading</h2>
-                <p class="detail">
-                    Run <span>'electron-vite dev --watch'</span> to enable. See
-                    <a target="_blank" href="https://evite.netlify.app/guide/hot-reloading.html"
-                        >docs</a
-                    >.
-                </p>
-            </article>
-        </div>
-        <div class="feature-item">
-            <article>
-                <h2 class="title">Debugging</h2>
-                <p class="detail">
-                    Check out <span>.vscode/launch.json</span>. See
-                    <a target="_blank" href="https://evite.netlify.app/guide/debugging.html">docs</a
-                    >.
-                </p>
-            </article>
-        </div>
-        <div class="feature-item">
-            <article>
-                <h2 class="title">Source Code Protection</h2>
-                <p class="detail">
-                    Supported via built-in plugin <span>bytecodePlugin</span>. See
-                    <a
-                        target="_blank"
-                        href="https://evite.netlify.app/guide/source-code-protection.html"
-                    >
-                        docs
-                    </a>
-                    .
-                </p>
-            </article>
-        </div>
-        <div class="feature-item">
-            <article>
-                <h2 class="title">Packaging</h2>
-                <p class="detail">
-                    Use
-                    <a target="_blank" href="https://www.electron.build">electron-builder</a>
-                    and pre-configured to pack your app.
-                </p>
-            </article>
-        </div>
-    </div>
+    <div id="mars2dContainer" style="width: 800px; height: 600px"></div>
 </template>
 
-<style lang="less">
-@import './assets/css/styles.less';
-</style>
+<style lang="less"></style>
