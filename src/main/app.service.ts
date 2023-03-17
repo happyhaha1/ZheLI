@@ -114,6 +114,10 @@ export class AppService {
                     finish = await this.stu.play(course)
                 })
                 await this.orm.updateCourse(convertCourseToCourseModel(course, []))
+
+                if (finish)
+                    courses = courses.filter(c => c.url !== course.url)
+
                 if (finish && courses.length === 0) {
                     this.win.webContents.send('current_study_state', course, 100)
                     break

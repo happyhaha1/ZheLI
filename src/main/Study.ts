@@ -283,7 +283,10 @@ export class ZheXue {
             course.videos[currentVideo.index].progress = videoProgress
 
             course.currentVideo = currentVideo
-            if (videoProgress === 100) {
+            const finishAnticon = await this.videoPage.$('.anticon')
+
+            if (finishAnticon) {
+                course.videos[currentVideo.index].progress = 100
                 const allVideoContent = await this.videoPage.$$('.set-content')
 
                 const index = currentVideo.index++
@@ -305,6 +308,11 @@ export class ZheXue {
             course.videos[0].progress = videoProgress
             course.currentVideo = course.videos[0]
             course.progress = videoProgress
+
+            const finishAnticon = await this.videoPage.$('.anticon')
+
+            if (finishAnticon)
+                course.progress = 100
         }
 
         if (course.progress === 100)
