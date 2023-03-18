@@ -1,8 +1,11 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import * as path from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { chromium } from 'playwright-core'
 
 function createWindow(): void {
+    app.commandLine.appendSwitch('remote-debugging-port', '8315')
+
     // Create the browser window.
     const mainWindow = new BrowserWindow({
         width: 900,
@@ -36,6 +39,10 @@ function createWindow(): void {
     } else {
         mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
     }
+
+    ipcMain.on('test', async () => {
+        console.log('测试一下')
+    })
 }
 
 // This method will be called when Electron has finished
