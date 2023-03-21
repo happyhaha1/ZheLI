@@ -36,6 +36,16 @@ const config = {
         deleteAppDataOnUninstall: true,
         perMachine: true,
     },
+    linux: {
+        target: {
+            target: 'deb',
+            arch: [
+                'aarch64',
+            ],
+        },
+        category: 'Education',
+        icon: 'src/common/icon.png',
+    },
 }
 
 module.exports = config
