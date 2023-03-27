@@ -5,6 +5,7 @@ export const useAppStore = defineStore('app', {
     state: () => {
         return {
             show: false,
+            rate: 1,
         }
     },
     getters: {
@@ -12,6 +13,9 @@ export const useAppStore = defineStore('app', {
     actions: {
         async chageShow() {
             await ipcInstance.send('change_show', this.show)
+        },
+        async chageRate() {
+            await ipcInstance.send('change_rate', this.rate)
         },
     },
     persist: true,

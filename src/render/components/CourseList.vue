@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { h } from 'vue'
-import { useCoursesStore } from '@render/store'
+import { useAppStore, useCoursesStore } from '@render/store'
 import { ElMessage, ElMessageBox, ElProgress } from 'element-plus'
 import type { Action } from 'element-plus'
-
 defineProps({
     isLoggedIn: {
         type: Boolean,
@@ -11,6 +10,9 @@ defineProps({
         default: false,
     },
 })
+
+const appStore = useAppStore()
+
 const colors = [
     { color: '#f56c6c', percentage: 20 },
     { color: '#e6a23c', percentage: 40 },
@@ -19,6 +21,14 @@ const colors = [
     { color: '#6f7ad3', percentage: 100 },
 ]
 
+async function handleRateChange() {
+    try {
+        await appStore.chageRate()
+        ElMessage.success('修改成功')
+    } catch (error) {
+        ElMessage.error(error.message)
+    }
+}
 const coursesStore = useCoursesStore()
 
 async function loadData() {
@@ -131,6 +141,10 @@ function showMessage() {
       <el-button v-if="coursesStore.isStudy" type="success" @click="showMessage">
         查看进度
       </el-button>
+      <div v-if="coursesStore.isStudy">
+        修改视频速度
+        <el-input-number v-model="appStore.rate" :step="0.5" :max="5.5" @change="handleRateChange" />
+      </div>
     </div>
   </div>
 </template>

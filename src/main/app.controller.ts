@@ -58,6 +58,11 @@ export class AppController {
         return this.appService.logout()
     }
 
+    @IpcHandle('change_rate')
+    public async change_rate(rate: number): Promise<IpcResponse<string>> {
+        return this.appService.changeRate(rate)
+    }
+
     public async close() {
         return this.appService.cancel()
     }

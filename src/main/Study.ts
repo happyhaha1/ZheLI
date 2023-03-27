@@ -384,6 +384,15 @@ export class ZheXue {
         }
     }
 
+    async chageRate(rate: number) {
+        await this.videoPage.evaluate((rate) => {
+            // Get the video element
+            const video = document.querySelector('video')
+            if (video)
+                video.playbackRate = rate
+        }, rate)
+    }
+
     async autoScroll(page: any) {
         await page.evaluate(async () => {
             await new Promise<void>((resolve, _reject) => {

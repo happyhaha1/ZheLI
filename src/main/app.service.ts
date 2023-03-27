@@ -90,6 +90,15 @@ export class AppService {
         }
     }
 
+    public async changeRate(rate: number): Promise<IpcResponse<string>> {
+        try {
+            await this.stu.chageRate(rate)
+            return { data: '退出登录成功' }
+        } catch (error) {
+            return { error }
+        }
+    }
+
     public async study(courses: Course[]): Promise<IpcResponse<string>> {
         try {
             const course = courses[0]
