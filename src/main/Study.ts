@@ -14,6 +14,7 @@ export class ZheXue {
     private videoPage?: Page
     private searchWindow?: BrowserWindow
     private searchPage?: Page
+    private rate?: number
 
     private readonly dataPath: string = path.join(app.getPath('userData'), '/data')
 
@@ -209,13 +210,13 @@ export class ZheXue {
         return parseInt(courseCount)
     }
 
-    async play(course: Course): Promise<boolean> {
+    async play(course: Course, show: boolean, rate: number): Promise<boolean> {
         await this.ensureBrowserInitialized()
         if (!this.videoPage) {
             const browserWindow = new BrowserWindow({
                 width: 800,
                 height: 600,
-                show: this.show,
+                show,
                 autoHideMenuBar: false,
             })
             this.videoWindow = browserWindow
@@ -317,7 +318,6 @@ export class ZheXue {
 
         if (course.progress === 100)
             return true
-
         const vedioStatus = await this.videoPage.$('.dplayer-playing')
         if (!vedioStatus) {
             // 点击播放按钮
@@ -326,6 +326,22 @@ export class ZheXue {
             const vedioStatus2 = this.videoPage.$('.dplayer-playing')
             if (!vedioStatus2)
                 throw new Error('无法播放')
+        }
+        if (!this.rate) {
+            this.rate = rate
+            await this.videoPage.evaluate((rate) => {
+            // Get the video element
+                const video = document.querySelector('video')
+                if (video)
+                    video.playbackRate = rate
+            }, this.rate)
+        } else {
+            await this.videoPage.evaluate((rate) => {
+                // Get the video element
+                const video = document.querySelector('video')
+                if (video)
+                    video.playbackRate = rate
+            }, this.rate)
         }
         return false
     }
@@ -385,6 +401,7 @@ export class ZheXue {
     }
 
     async chageRate(rate: number) {
+        this.rate = rate
         await this.videoPage.evaluate((rate) => {
             // Get the video element
             const video = document.querySelector('video')

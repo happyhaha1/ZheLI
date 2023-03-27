@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { h } from 'vue'
 import { useAppStore, useCoursesStore } from '@render/store'
 import { ElMessage, ElMessageBox, ElProgress } from 'element-plus'
-import type { Action } from 'element-plus'
 defineProps({
     isLoggedIn: {
         type: Boolean,
@@ -49,34 +47,42 @@ const formatProgress = (quantity: Course): string => {
 function handleSelect(selectData: Course[]) {
     coursesStore.selectionCouers = selectData
 }
-const messageOptions = {
-    title: '学习进度',
-    // Should pass a function if VNode contains dynamic props
-    message: () => h('p', [
-        '本次学习总进度',
-        h(ElProgress, { percentage: coursesStore.allProgress }),
-        `${coursesStore.currentVideo ? `当前正在学习${coursesStore.currentVideo.name}的视频进度` : '未开始'}`,
-        h(ElProgress, { percentage: coursesStore.currentVideo ? coursesStore.currentVideo.progress : 0 })]),
-    closeOnClickModal: false,
-    closeOnPressEscape: false,
-    showCancelButton: true,
-    showConfirmButton: true,
-    cancelButtonText: '停止学习',
-    confirmButtonText: '后台隐藏',
-    callback: (action: Action) => {
-        if (action === 'confirm') {
-            ElMessage({
-                type: 'info',
-                message: '你点击了隐藏按钮,你可以通过下方按钮点击查看进度',
-            })
-        } else if (action === 'cancel') {
-            coursesStore.cancel()
-            ElMessage({
-                type: 'info',
-                message: '开始取消了',
-            })
-        }
-    },
+// const messageOptions = {
+// title: '学习进度',
+//     // Should pass a function if VNode contains dynamic props
+//     message: () => h('p', [
+//         '本次学习总进度',
+//         h(ElProgress, { percentage: coursesStore.allProgress }),
+//         `${coursesStore.currentVideo ? `当前正在学习${coursesStore.currentVideo.name}的视频进度` : '未开始'}`,
+//         h(ElProgress, { percentage: coursesStore.currentVideo ? coursesStore.currentVideo.progress : 0 })]),
+//     closeOnClickModal: false,
+//     closeOnPressEscape: false,
+//     showCancelButton: true,
+//     showConfirmButton: true,
+//     cancelButtonText: '停止学习',
+//     confirmButtonText: '后台隐藏',
+//     callback: (action: Action) => {
+//         if (action === 'confirm') {
+//             ElMessage({
+//                 type: 'info',
+//                 message: '你点击了隐藏按钮,你可以通过下方按钮点击查看进度',
+//             })
+//         } else if (action === 'cancel') {
+//             coursesStore.cancel()
+//             ElMessage({
+//                 type: 'info',
+//                 message: '开始取消了',
+//             })
+//         }
+//     },
+// }
+function cancel() {
+    coursesStore.cancel()
+    ElMessage({
+        type: 'info',
+        message: '开始取消了',
+    })
+    coursesStore.dialogVisible = false
 }
 function study() {
     if (coursesStore.selectionCouers.length === 0) {
@@ -85,12 +91,14 @@ function study() {
         })
     } else {
         coursesStore.isStudy = true
-        ElMessageBox(messageOptions)
+        // ElMessageBox(messageOptions)
+        coursesStore.dialogVisible = true
         coursesStore.study()
     }
 }
 function showMessage() {
-    ElMessageBox(messageOptions) // coursesStore.study()
+    coursesStore.dialogVisible = true
+    // ElMessageBox(messageOptions) // coursesStore.study()
 }
 </script>
 
@@ -141,12 +149,31 @@ function showMessage() {
       <el-button v-if="coursesStore.isStudy" type="success" @click="showMessage">
         查看进度
       </el-button>
-      <div v-if="coursesStore.isStudy">
-        修改视频速度
-        <el-input-number v-model="appStore.rate" :step="0.5" :max="5.5" @change="handleRateChange" />
-      </div>
+      <div v-if="coursesStore.isStudy" />
     </div>
   </div>
+  <el-dialog v-model="coursesStore.dialogVisible" title="学习进度" draggable>
+    本次学习总进度
+    <ElProgress :percentage="coursesStore.allProgress" :color="colors" :text-inside="true" :stroke-width="22" />
+    {{ coursesStore.currentVideo ? `当前正在学习${coursesStore.currentVideo.name}的视频进度` : '未开始' }}
+    <ElProgress
+      :percentage="coursesStore.currentVideo ? coursesStore.currentVideo.progress : 0" :color="colors"
+      :text-inside="true"
+      :stroke-width="22"
+    />
+    <p />
+    修改视频速度
+    <el-input-number v-model="appStore.rate" :step="0.5" :max="5.5" @change="handleRateChange" />
+    <p />
+    <div class="dialog-footer">
+      <el-button @click="cancel">
+        停止学习
+      </el-button>
+      <el-button type="primary" @click="coursesStore.dialogVisible = false">
+        隐藏进度框
+      </el-button>
+    </div>
+  </el-dialog>
 </template>
 
 <style scoped>

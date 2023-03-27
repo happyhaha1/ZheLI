@@ -99,18 +99,18 @@ export class AppService {
         }
     }
 
-    public async study(courses: Course[]): Promise<IpcResponse<string>> {
+    public async study(courses: Course[], show: boolean, rate: number): Promise<IpcResponse<string>> {
         try {
             const course = courses[0]
             this.run = true
-            this.studyNoSync(course, courses)
+            this.studyNoSync(course, courses, show, rate)
             return { data: '启动成功' }
         } catch (error) {
             return { error }
         }
     }
 
-    public async studyNoSync(course: Course, courses: Course[]) {
+    public async studyNoSync(course: Course, courses: Course[], show: boolean, rate: number) {
         try {
             while (true) {
                 if (!this.run)
@@ -120,7 +120,7 @@ export class AppService {
                 await this.lock.acquire(this.lockKey, async () => {
                     if (!this.run)
                         return
-                    finish = await this.stu.play(course)
+                    finish = await this.stu.play(course, show, rate)
                 })
                 await this.orm.updateCourse(convertCourseToCourseModel(course, []))
 
@@ -131,7 +131,7 @@ export class AppService {
                         this.run = false
                     } else {
                         const nextCourse = courses[0]
-                        await this.studyNoSync(nextCourse, courses)
+                        await this.studyNoSync(nextCourse, courses, show, rate)
                     }
                     break
                 } else {

@@ -1,5 +1,6 @@
 import { ipcInstance } from '@render/plugins'
 import { defineStore } from 'pinia'
+import { useAppStore } from './app'
 
 export const useCoursesStore = defineStore('courses', {
     state: () => {
@@ -16,6 +17,7 @@ export const useCoursesStore = defineStore('courses', {
             currentVideo: null,
             allProgress: 0,
             isStudy: false,
+            dialogVisible: false,
         }
     },
     getters: {
@@ -38,7 +40,8 @@ export const useCoursesStore = defineStore('courses', {
             this.get_courses()
         },
         async study() {
-            await ipcInstance.send<string>('study', JSON.stringify(this.selectionCouers))
+            const app = useAppStore()
+            await ipcInstance.send<string>('study', JSON.stringify(this.selectionCouers), app.show, app.rate)
         },
         async receive(course: Course, percentage: number) {
             if (percentage === 100) {

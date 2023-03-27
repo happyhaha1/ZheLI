@@ -43,9 +43,9 @@ export class AppController {
     }
 
     @IpcHandle('study')
-    public async study(data: string): Promise<IpcResponse<string>> {
+    public async study(data: string, show: boolean, rate: number): Promise<IpcResponse<string>> {
         const courses: Course[] = JSON.parse(data)
-        return this.appService.study(courses)
+        return this.appService.study(courses, show, rate)
     }
 
     @IpcHandle('cancel')
