@@ -134,7 +134,7 @@ function showMessage() {
       class="pagination-wrapper"
       layout="sizes, prev, pager, next, total"
       :total="coursesStore.meta.total"
-      :page-sizes="[10, 20, 30]"
+      :page-sizes="[10, 20, 30, 50, 100]"
       @current-change="loadData"
       @size-change="loadData"
     />

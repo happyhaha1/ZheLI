@@ -56,7 +56,7 @@ ipc.on('stduy_error', async (e) => {
     await coursesStore.empty()
     ElMessage({
         showClose: true,
-        message: `报错啦${e.message}`,
+        message: `报错啦!!!!\n${e.message}`,
         type: 'error',
         duration: 0,
     })

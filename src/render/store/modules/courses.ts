@@ -62,7 +62,9 @@ export const useCoursesStore = defineStore('courses', {
                 currentVideo: null,
                 allProgress: 0,
                 isStudy: false,
+                dialogVisible: false,
             })
+            this.get_courses()
         },
     },
 })

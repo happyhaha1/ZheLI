@@ -152,6 +152,7 @@ export class AppService {
             })
             this.run = false
         } finally {
+            await this.orm.updateCourse(convertCourseToCourseModel(course, []))
             if (this.isCancel) {
                 this.win.webContents.send('finish_success')
                 this.isCancel = false

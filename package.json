@@ -1,6 +1,6 @@
 {
   "name": "zhe_li",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "packageManager": "yarn@3.4.1",
   "description": "Vite + Electron with esbuild, so fast! ⚡",
   "author": { "name": "happyhaha", "email": "happyhaha@qq.cn" },

@@ -40,7 +40,7 @@ const config = {
         target: {
             target: 'deb',
             arch: [
-                'aarch64',
+                'arm64',
             ],
         },
         category: 'Education',

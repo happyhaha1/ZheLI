@@ -251,6 +251,36 @@ export class ZheXue {
 
             course.frist = false
         }
+
+        // const vedioStatus = await this.videoPage.$('.dplayer-playing')
+        // if (!vedioStatus) {
+        //     // 点击播放按钮
+        //     await new Promise(resolve => setTimeout(resolve, 5000))
+        //     ;(await this.videoPage.$('.dplayer-play-icon')).click()
+        //     const vedioStatus2 = this.videoPage.$('.dplayer-playing')
+        //     if (!vedioStatus2)
+        //         throw new Error('无法播放')
+        // }
+        if (!this.rate)
+            this.rate = rate
+
+        await this.videoPage.waitForSelector('video')
+
+        const src = await this.videoPage.$eval('video', video => video.src)
+        if (!src) {
+            course.progress = 100
+            throw new Error('视频源不存在,已跳过该视频源,请重新开始')
+        } else {
+            await this.videoPage.evaluate((rate) => {
+                const video = document.querySelector('video')
+                const isPlaying = video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2
+                if (!isPlaying)
+                    video.play()
+                if (video.playbackRate !== rate)
+                    video.playbackRate = rate
+            }, this.rate)
+        }
+
         if (course.videoNum > 1) {
             const currentVideoName = await this.videoPage.$eval(
                 '.set-content.active .right .set-title',
@@ -318,32 +348,8 @@ export class ZheXue {
 
         if (course.progress === 100)
             return true
-        const vedioStatus = await this.videoPage.$('.dplayer-playing')
-        if (!vedioStatus) {
-            // 点击播放按钮
-            await new Promise(resolve => setTimeout(resolve, 5000))
-            ;(await this.videoPage.$('.dplayer-play-icon')).click()
-            const vedioStatus2 = this.videoPage.$('.dplayer-playing')
-            if (!vedioStatus2)
-                throw new Error('无法播放')
-        }
-        if (!this.rate) {
-            this.rate = rate
-            await this.videoPage.evaluate((rate) => {
-            // Get the video element
-                const video = document.querySelector('video')
-                if (video)
-                    video.playbackRate = rate
-            }, this.rate)
-        } else {
-            await this.videoPage.evaluate((rate) => {
-                // Get the video element
-                const video = document.querySelector('video')
-                if (video)
-                    video.playbackRate = rate
-            }, this.rate)
-        }
-        return false
+        else
+            return false
     }
 
     async logout() {
@@ -405,7 +411,7 @@ export class ZheXue {
         await this.videoPage.evaluate((rate) => {
             // Get the video element
             const video = document.querySelector('video')
-            if (video)
+            if (video.playbackRate !== rate)
                 video.playbackRate = rate
         }, rate)
     }
