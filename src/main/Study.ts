@@ -2,7 +2,6 @@ import path from 'path'
 import fs from 'fs'
 import { BrowserWindow, app } from 'electron'
 import pie from 'puppeteer-in-electron'
-import { Duration } from 'luxon'
 import { Browser, Page } from 'puppeteer-core'
 export class ZheXue {
     private browser?: Browser
@@ -282,6 +281,7 @@ export class ZheXue {
         }
 
         if (course.videoNum > 1) {
+            await new Promise(resolve => setTimeout(resolve, 5000))
             const currentVideoName = await this.videoPage.$eval(
                 '.set-content.active .right .set-title',
                 el => el.textContent,
@@ -297,10 +297,10 @@ export class ZheXue {
             }, 0)
             // const progress = await this.videoPage.$eval('.ant-progress-text', el => el.textContent)
             course.progress = totalProgress / course.videos.length
-            const ntime = await this.videoPage.$eval('.dplayer-ptime', el => el.textContent)
-            const dtime = await this.videoPage.$eval('.dplayer-dtime', el => el.textContent)
-            const ntimelong = StrToSeconds(ntime)
-            const dtimelong = StrToSeconds(dtime)
+            // const ntime = await this.videoPage.$eval('.dplayer-ptime', el => el.textContent)
+            // const dtime = await this.videoPage.$eval('.dplayer-dtime', el => el.textContent)
+            // const ntimelong = StrToSeconds(ntime)
+            // const dtimelong = StrToSeconds(dtime)
 
             const progressStr = await this.videoPage.$eval(
                 '.set-content.active .right .set-progress',
@@ -309,8 +309,8 @@ export class ZheXue {
             const match = progressStr.match(/\d+/)
             const videoProgress = match ? parseInt(match[0], 10) : 0
 
-            course.videos[currentVideo.index].dtime = dtimelong
-            course.videos[currentVideo.index].ntime = ntimelong
+            // course.videos[currentVideo.index].dtime = dtimelong
+            // course.videos[currentVideo.index].ntime = ntimelong
             course.videos[currentVideo.index].progress = videoProgress
 
             course.currentVideo = currentVideo
@@ -324,12 +324,13 @@ export class ZheXue {
                 allVideoContent[index].click()
             }
         } else {
-            const ntime = await this.videoPage.$eval('.dplayer-ptime', el => el.textContent)
-            const dtime = await this.videoPage.$eval('.dplayer-dtime', el => el.textContent)
-            const ntimelong = StrToSeconds(ntime)
-            const dtimelong = StrToSeconds(dtime)
-            course.videos[0].dtime = dtimelong
-            course.videos[0].ntime = ntimelong
+            // const ntime = await this.videoPage.$eval('.dplayer-ptime', el => el.textContent)
+            // const dtime = await this.videoPage.$eval('.dplayer-dtime', el => el.textContent)
+            // const ntimelong = StrToSeconds(ntime)
+            // const dtimelong = StrToSeconds(dtime)
+            // course.videos[0].dtime = dtimelong
+            // course.videos[0].ntime = ntimelong
+            await new Promise(resolve => setTimeout(resolve, 5000))
             const progressStr = await this.videoPage.$eval(
                 '.ant-progress-text',
                 el => el.textContent,
@@ -434,11 +435,4 @@ export class ZheXue {
             })
         })
     }
-}
-
-function StrToSeconds(timeString: string): number {
-    const [minutes, seconds] = timeString.split(':').map(Number)
-    const duration = Duration.fromObject({ minutes, seconds })
-    const totalSeconds = duration.as('seconds')
-    return totalSeconds
 }
