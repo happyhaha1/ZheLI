@@ -1,7 +1,6 @@
 import { join } from 'path'
 import { BrowserWindow, app } from 'electron'
 import pie from 'puppeteer-in-electron'
-
 const isDev = !app.isPackaged
 
 pie.initialize(app, 8136)
@@ -21,6 +20,11 @@ export async function createWindow() {
     })
 
     // win.maximize()
+
+    // const macAddress = getMAC()
+    // const { data } = await axios.get(`http://check.kxlove.cn:9000?mac=${macAddress}`)
+    // if (data.status === 1)
+    //     return null
 
     const URL = isDev
         ? process.env.DS_RENDERER_URL
@@ -51,8 +55,10 @@ export async function createWindow() {
 export async function restoreOrCreateWindow() {
     let window = BrowserWindow.getAllWindows().find(w => !w.isDestroyed())
 
-    if (window === undefined)
+    if (window === undefined) {
+        // 发起网络请求
         window = await createWindow()
+    }
 
     if (window.isMinimized())
         window.restore()

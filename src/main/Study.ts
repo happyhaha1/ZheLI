@@ -275,32 +275,37 @@ export class ZheXue {
                 const isPlaying = video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2
                 if (!isPlaying)
                     video.play()
-                if (video.playbackRate !== rate)
+                if (video.playbackRate !== rate && video.duration > 5 * 60)
                     video.playbackRate = rate
+                if (video.duration <= 5 * 60)
+                    video.playbackRate = 1
             }, this.rate)
         }
 
+        // const videoProgress = await this.videoPage.evaluate(() => {
+        //     const video = document.querySelector('video')
+        //     const duration = video.duration
+        //     const currentTime = video.currentTime
+        //     return (currentTime / duration) * 100
+        // })
+
         if (course.videoNum > 1) {
             await new Promise(resolve => setTimeout(resolve, 5000))
+
             const currentVideoName = await this.videoPage.$eval(
                 '.set-content.active .right .set-title',
                 el => el.textContent,
             )
 
             const currentVideo = course.videos.find(video => video.name === currentVideoName)
-
             const setProgressValues = await this.videoPage.$$eval('.set-content .right .set-progress', elements => elements.map(e => e.textContent))
             const totalProgress = setProgressValues.reduce((acc, text) => {
                 const progressMatch = text.match(/\d+/) // 从文本中提取进度数字部分
                 const progress = progressMatch ? parseInt(progressMatch[0]) : 0
                 return acc + progress
             }, 0)
-            // const progress = await this.videoPage.$eval('.ant-progress-text', el => el.textContent)
+
             course.progress = totalProgress / course.videos.length
-            // const ntime = await this.videoPage.$eval('.dplayer-ptime', el => el.textContent)
-            // const dtime = await this.videoPage.$eval('.dplayer-dtime', el => el.textContent)
-            // const ntimelong = StrToSeconds(ntime)
-            // const dtimelong = StrToSeconds(dtime)
 
             const progressStr = await this.videoPage.$eval(
                 '.set-content.active .right .set-progress',
@@ -309,28 +314,21 @@ export class ZheXue {
             const match = progressStr.match(/\d+/)
             const videoProgress = match ? parseInt(match[0], 10) : 0
 
-            // course.videos[currentVideo.index].dtime = dtimelong
-            // course.videos[currentVideo.index].ntime = ntimelong
             course.videos[currentVideo.index].progress = videoProgress
 
             course.currentVideo = currentVideo
             const finishAnticon = await this.videoPage.$('.anticon')
-
             if (finishAnticon) {
                 course.videos[currentVideo.index].progress = 100
                 const allVideoContent = await this.videoPage.$$('.set-content')
-
-                const index = currentVideo.index++
-                allVideoContent[index].click()
+                if (currentVideo.index + 1 !== course.videoNum) {
+                    const index = currentVideo.index++
+                    allVideoContent[index].click()
+                }
             }
         } else {
-            // const ntime = await this.videoPage.$eval('.dplayer-ptime', el => el.textContent)
-            // const dtime = await this.videoPage.$eval('.dplayer-dtime', el => el.textContent)
-            // const ntimelong = StrToSeconds(ntime)
-            // const dtimelong = StrToSeconds(dtime)
-            // course.videos[0].dtime = dtimelong
-            // course.videos[0].ntime = ntimelong
             await new Promise(resolve => setTimeout(resolve, 5000))
+
             const progressStr = await this.videoPage.$eval(
                 '.ant-progress-text',
                 el => el.textContent,
@@ -342,7 +340,6 @@ export class ZheXue {
             course.progress = videoProgress
 
             const finishAnticon = await this.videoPage.$('.anticon')
-
             if (finishAnticon)
                 course.progress = 100
         }

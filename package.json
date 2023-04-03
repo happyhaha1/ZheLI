@@ -3,7 +3,10 @@
   "version": "0.0.3",
   "packageManager": "yarn@3.4.1",
   "description": "Vite + Electron with esbuild, so fast! ⚡",
-  "author": { "name": "happyhaha", "email": "happyhaha@qq.cn" },
+  "author": {
+    "name": "happyhaha",
+    "email": "happyhaha@qq.cn"
+  },
   "main": "dist/main/index.js",
   "scripts": {
     "vite": "vite",
@@ -24,9 +27,11 @@
   "dependencies": {
     "@types/async-lock": "^1.4.0",
     "async-lock": "^1.4.0",
+    "axios": "^1.3.4",
     "better-sqlite3": "^8.1.0",
     "einf": "^1.4.0",
     "element-plus": "^2.2.33",
+    "getmac": "^5.20.0",
     "luxon": "^3.2.1",
     "pinia": "^2.0.32",
     "pinia-plugin-loading": "^2.0.0",

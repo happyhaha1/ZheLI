@@ -31,6 +31,7 @@ export const useCoursesStore = defineStore('courses', {
                 meta: {
                     total: data.count,
                 },
+                dialogVisible: false,
             })
         },
         async sync_coures() {
